@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cyclical-skip-list", "cyclical-skip-list.csproj", "{B4886D5D-7AEA-4541-A6F4-5F601981D323}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cyclical-skip-list-tests", "..\cyclical-skip-list-tests\cyclical-skip-list-tests.csproj", "{F47E8D6A-B0CB-477B-BA36-DC4ECA1DDDAD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B4886D5D-7AEA-4541-A6F4-5F601981D323}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4886D5D-7AEA-4541-A6F4-5F601981D323}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4886D5D-7AEA-4541-A6F4-5F601981D323}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4886D5D-7AEA-4541-A6F4-5F601981D323}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F47E8D6A-B0CB-477B-BA36-DC4ECA1DDDAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F47E8D6A-B0CB-477B-BA36-DC4ECA1DDDAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F47E8D6A-B0CB-477B-BA36-DC4ECA1DDDAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F47E8D6A-B0CB-477B-BA36-DC4ECA1DDDAD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
