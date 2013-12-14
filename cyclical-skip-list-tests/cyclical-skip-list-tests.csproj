@@ -63,7 +63,7 @@
     <Compile Include="Source\AutoDataAttributes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\FixtureCustomizations.cs" />
-    <Compile Include="Source\SkiplistFactoryTests.cs" />
+    <Compile Include="Source\FactoryTests.cs" />
     <Compile Include="Source\UtilitiesTests.cs" />
   </ItemGroup>
   <ItemGroup>

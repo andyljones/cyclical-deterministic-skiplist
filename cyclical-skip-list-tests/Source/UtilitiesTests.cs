@@ -242,23 +242,5 @@ namespace CyclicalSkipListTests
 
             // Teardown
         }
-
-        [Theory]
-        [AutoRandomRepeatCountData(5, 5)]
-        public void CreateFrom_WhenMakingATwoLevelSkiplist_ShouldCorrectlyAssignKeysToTheTopLevel
-            (List<int> keys)
-        {
-            // Fixture setup
-
-            // Exercise system
-            var sutHead = SkiplistFactory.CreateFrom(keys);
-
-            // Verify outcome
-            var result = sutHead.ConvertToString();
-
-            Debug.WriteLine(result);
-
-            // Teardown
-        }
     }
 }

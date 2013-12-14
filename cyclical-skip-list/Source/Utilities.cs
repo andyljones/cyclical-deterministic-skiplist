@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using CyclicalSkipList;
 
-namespace CyclicalSkipListTests
+namespace CyclicalSkipList
 {
     public static class Utilities
     {
@@ -102,34 +100,6 @@ namespace CyclicalSkipListTests
                 currentNode = currentNode.Down;
             }
             while (currentNode != null);
-        }
-
-
-        public static string ConvertToString<T>(this INode<T> start)
-        {
-            var headsOfLevels = EnumerateLevels(start);
-            var length = BottomOf(start).DistanceToSelf();
-
-            var levelFormatString = string.Concat(Enumerable.Range(0, length).Select(i => "{" + i + ",4}").ToArray());
-
-            string outputString = "";
-            foreach (var head in headsOfLevels)
-            {
-                var keys = EnumerateKeysInLevel(head).ToList();
-                var spacings = EnumerateNodesInLevel(head).Select(node => node.SizeOfBaseGapTo(node.Right)-1).ToList();
-
-                var valuesForThisLevel = new List<string>();
-                for (int i = 0; i < keys.Count; i++)
-                {
-                    valuesForThisLevel.Add(keys[i].ToString());
-                    valuesForThisLevel.AddRange(Enumerable.Repeat("", spacings[i]));
-                }
-
-                var stringForThisLevel = String.Format(levelFormatString, valuesForThisLevel.ToArray());
-                outputString = outputString + stringForThisLevel + "\n";
-            }
-
-            return outputString.Replace(" ", "-");
         }
     }
 }

@@ -42,7 +42,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\Node.cs" />
     <Compile Include="Source\INode.cs" />
-    <Compile Include="Source\SkiplistFactory.cs" />
+    <Compile Include="Source\Factory.cs" />
+    <Compile Include="Source\StringFormatter.cs" />
     <Compile Include="Source\Utilities.cs" />
   </ItemGroup>
   <ItemGroup />

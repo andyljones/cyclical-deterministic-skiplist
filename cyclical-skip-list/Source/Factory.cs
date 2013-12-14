@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CyclicalSkipListTests;
 
 namespace CyclicalSkipList
 {
-    public static class SkiplistFactory
+    public static class Factory
     {
         private const int MinimumGapSize = 1;
         private const int MaximumGapSize = 4;
