@@ -66,6 +66,7 @@ namespace CyclicalSkipListTests
             var keys = fixture.Create<List<T>>();
             var nodes = keys.Select(i => { var node = Substitute.For<INode<T>>();
                                              node.Key = i;
+                                             node.Down = null;
                                              return node;
                                          }).ToList();
 

@@ -30,10 +30,10 @@ namespace CyclicalSkipListTests
                 }
             }
 
-            var sutHead = nodes.Last();
+            var listHead = nodes.Last();
 
             // Exercise system
-            var result = Utilities.BottomOf(sutHead);
+            var result = Utilities.BottomOf(listHead);
 
             // Verify outcome
             Assert.Equal(nodes[0], result);
@@ -44,14 +44,14 @@ namespace CyclicalSkipListTests
         [Theory]
         [AutoINodeLinkedListData(LowerLengthBound, UpperLengthBound)]
         public void DistanceTo_GivenAHorizontalLinkedList_ReturnsTheDistanceBetweenTheSpecifiedNodes
-            (List<INode<int>> nodes, INode<int> sutHead)
+            (List<INode<int>> nodes, INode<int> listHead)
         {
             // Fixture setup
 
             // Exercise system
-            var result0 = sutHead.DistanceTo(nodes[0]);
-            var result1 = sutHead.DistanceTo(nodes[1 % nodes.Count]);
-            var result2 = sutHead.DistanceTo(nodes[nodes.Count - 1]);
+            var result0 = listHead.DistanceTo(nodes[0]);
+            var result1 = listHead.DistanceTo(nodes[1 % nodes.Count]);
+            var result2 = listHead.DistanceTo(nodes[nodes.Count - 1]);
 
             // Verify outcome
             Assert.Equal(0 % nodes.Count, result0);
@@ -63,13 +63,13 @@ namespace CyclicalSkipListTests
 
         [Theory]
         [AutoINodeLinkedListData(LowerLengthBound, UpperLengthBound)]
-        public void LengthOf_GivenAHorizontalLinkedList_ReturnsTheLengthOfTheList
-            (List<INode<int>> nodes, INode<int> sutHead)
+        public void DistanceToSelf_GivenAHorizontalLinkedList_ReturnsTheLengthOfTheList
+            (List<INode<int>> nodes, INode<int> listHead)
         {
             // Fixture setup
 
             // Exercise system
-            var result = sutHead.Count();
+            var result = listHead.DistanceToSelf();
 
             // Verify outcome
             Assert.Equal(nodes.Count, result);
@@ -80,14 +80,14 @@ namespace CyclicalSkipListTests
         [Theory]
         [AutoINodeLinkedListData(LowerLengthBound, UpperLengthBound)]
         public void MoveRightBy_GivenAHorizontalLinkedList_ReturnsANodeTheCorrectDistanceToTheRightOfSpecifiedNode
-            (List<INode<int>> nodes, INode<int> sutHead)
+            (List<INode<int>> nodes, INode<int> listHead)
         {
             // Fixture setup
 
             // Exercise system
-            var result0 = sutHead.RightBy(0);
-            var result1 = sutHead.RightBy(2);
-            var result2 = sutHead.RightBy(nodes.Count + 1);
+            var result0 = listHead.RightBy(0);
+            var result1 = listHead.RightBy(2);
+            var result2 = listHead.RightBy(nodes.Count + 1);
 
             // Verify outcome
             Assert.Equal(nodes[0 % nodes.Count], result0);
@@ -137,21 +137,126 @@ namespace CyclicalSkipListTests
 
         [Theory]
         [AutoINodeLinkedListData(LowerLengthBound, UpperLengthBound)]
-        public void DistanceAlongSublevelTo_WhenStartAndEndHaveNodesBelowThem_ShouldReturnNumberOfInterveningNodes
+        public void SizeOfGapTo_WhenStartAndEndHaveNodesBelowThem_ShouldReturnNumberOfInterveningNodes
             (List<INode<int>> nodes)
         {
 	        // Fixture setup
-            var sutStart = Substitute.For<INode<int>>();
-            sutStart.Down = nodes.First();
+            var start = Substitute.For<INode<int>>();
+            start.Down = nodes.First();
 
-            var sutEnd = Substitute.For<INode<int>>();
-            sutEnd.Down = nodes.Last();
+            var end = Substitute.For<INode<int>>();
+            end.Down = nodes.Last();
 
 	        // Exercise system
-            var result = sutStart.DistanceAlongSublevelTo(sutEnd);
+            var result = start.SizeOfGapTo(end);
 
             // Verify outcome
             Assert.Equal(nodes.Count-1, result);
+
+            // Teardown
+        }
+
+        [Theory]
+        [AutoINodeLinkedListData(LowerLengthBound, UpperLengthBound)]
+        public void SizeOfBaseGapTo_WhenStartAndEndHaveNodesBelowThem_ShouldReturnNumberOfInterveningNodesAtBottomLevel
+            (List<INode<int>> nodes)
+        {
+            // Fixture setup
+            var start = Substitute.For<INode<int>>();
+            var midlevelStart = Substitute.For<INode<int>>();
+            start.Down = midlevelStart;
+            midlevelStart.Down = nodes.First();
+
+            var end = Substitute.For<INode<int>>();
+            var midlevelEnd = Substitute.For<INode<int>>();
+            end.Down = midlevelEnd;
+            midlevelEnd.Down = nodes.Last();
+
+            // Exercise system
+            var result = start.SizeOfBaseGapTo(end);
+
+            // Verify outcome
+            Assert.Equal(nodes.Count - 1, result);
+
+            // Teardown
+        }
+
+        [Theory]
+        [AutoINodeLinkedListData(LowerLengthBound, UpperLengthBound)]
+        public void EnumerateKeysInLevel_GivenALinkedList_ShouldEnumerateKeysInThatLevel
+            (List<INode<int>> nodes, INode<int> listHead)
+        {
+            // Fixture setup
+
+            // Exercise system
+            var result = Utilities.EnumerateKeysInLevel(listHead);
+
+            // Verify outcome
+            var expectedResult = nodes.Select(node => node.Key);
+
+            Assert.Equal(expectedResult, result);
+
+            // Teardown
+        }
+
+        [Theory]
+        [AutoINodeLinkedListData(LowerLengthBound, UpperLengthBound)]
+        public void EnumerateNodesInLevel_GivenALinkedList_ShouldEnumerateNodesInThatLevel
+            (List<INode<int>> nodes, INode<int> listHead)
+        {
+            // Fixture setup
+
+            // Exercise system
+            var result = Utilities.EnumerateNodesInLevel(listHead);
+
+            // Verify outcome
+            var expectedResult = nodes;
+
+            Assert.Equal(expectedResult, result);
+
+            // Teardown
+        }
+
+        [Theory]
+        [AutoIsolatedNodeData(LowerLengthBound, UpperLengthBound)]
+        public void EnumerateLevels_GivenAVerticalLinkedList_EnumeratesEachNodeBelowTheNodeSpecified
+            (List<INode<int>> nodes)
+        {
+            // Fixture setup
+            if (nodes.Count > 1)
+            {
+                for (int i = 1; i < nodes.Count; i++)
+                {
+                    nodes[i].Down = nodes[i - 1];
+                }
+            }
+
+            var listHead = nodes.Last();
+            
+            // Exercise system
+            var result = Utilities.EnumerateLevels(listHead).ToList();
+
+            // Verify outcome
+            result.Reverse();
+            Assert.Equal(nodes, result);
+
+            // Teardown
+        }
+
+        [Theory]
+        [AutoRandomRepeatCountData(5, 5)]
+        public void CreateFrom_WhenMakingATwoLevelSkiplist_ShouldCorrectlyAssignKeysToTheTopLevel
+            (List<int> keys)
+        {
+            // Fixture setup
+
+            // Exercise system
+            var sutHead = SkiplistFactory.CreateFrom(keys);
+
+            // Verify outcome
+            var result = sutHead.ConvertToString();
+
+            Debug.WriteLine(result);
 
             // Teardown
         }
