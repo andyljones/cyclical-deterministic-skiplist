@@ -4,6 +4,6 @@
     {
         T Key { get; set; }
         INode<T> Right { get; set; }
-        INode<T> Down { get; set; } 
+        INode<T> Down { get; set; }
     }
 }
