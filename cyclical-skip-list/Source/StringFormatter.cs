@@ -9,7 +9,7 @@ namespace CyclicalSkipList
         public static string ConvertToString<T>(this INode<T> start)
         {
             var levelFormatString = CreateFormatString(start);
-            var headsOfLevels = Utilities.EnumerateLevels(start);
+            var headsOfLevels = SkiplistUtilities.EnumerateLevels(start);
 
             string outputString = "";
             foreach (var head in headsOfLevels)
@@ -22,8 +22,8 @@ namespace CyclicalSkipList
 
         private static string CreateFormatString<T>(INode<T> head)
         {
-            var headOfLowestLevel = Utilities.BottomOf(head);
-            var keys = Utilities.EnumerateKeysInLevel(headOfLowestLevel).ToList();
+            var headOfLowestLevel = head.Bottom();
+            var keys = SkiplistUtilities.EnumerateKeysInLevel(headOfLowestLevel).ToList();
 
             var numberOfColumns = keys.Count();
             var columnWidth = keys.Max(key => key.ToString().Length) + 1;
@@ -36,7 +36,7 @@ namespace CyclicalSkipList
 
         private static string ConvertLevelToString<T>(INode<T> head, string formatString)
         {
-            var nodes = Utilities.EnumerateNodesInLevel(head).ToList();
+            var nodes = SkiplistUtilities.EnumerateNodesInLevel(head).ToList();
             var keys = nodes.ToDictionary(node => node, node => node.Key);
             var spacings = nodes.ToDictionary(node => node, node => node.SizeOfBaseGapTo(node.Right) - 1);
 

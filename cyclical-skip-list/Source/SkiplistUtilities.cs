@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace CyclicalSkipList
 {
-    public static class Utilities
+    public static class SkiplistUtilities
     {
-        public static INode<T> BottomOf<T>(INode<T> node)
+        public static INode<T> Bottom<T>(this INode<T> node)
         {
             return EnumerateLevels(node).Last();
         }
@@ -66,7 +66,7 @@ namespace CyclicalSkipList
 
         public static int SizeOfBaseGapTo<T>(this INode<T> start, INode<T> end)
         {
-            return BottomOf(start).Right.DistanceTo(BottomOf(end)) + 1;
+            return start.Bottom().Right.DistanceTo(end.Bottom()) + 1;
         }
 
         public static IEnumerable<T> EnumerateKeysInLevel<T>(INode<T> start)

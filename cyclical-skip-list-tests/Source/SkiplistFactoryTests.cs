@@ -7,7 +7,7 @@ using Xunit.Extensions;
 
 namespace CyclicalSkipListTests
 {
-    public class FactoryTests
+    public class SkiplistFactoryTests
     {
         private const int MinimumGapSize = 1;
         private const int MaximumGapSize = 4;
@@ -18,7 +18,7 @@ namespace CyclicalSkipListTests
             // Fixture setup
 
             // Exercise system
-            var result = Factory.CreateFrom(new List<int>());
+            var result = SkiplistFactory.CreateFrom(new List<int>());
 
             // Verify outcome
             Assert.Equal(null, result);
@@ -35,7 +35,7 @@ namespace CyclicalSkipListTests
             var expectedResult = keys.Count;
 
             // Exercise system
-            var sutHead = Factory.CreateFrom(keys);
+            var sutHead = SkiplistFactory.CreateFrom(keys).Head;
 
             // Verify outcome
             var result = sutHead.DistanceToSelf();
@@ -53,10 +53,10 @@ namespace CyclicalSkipListTests
             var expectedResults = keys.OrderBy(key => key);
 
             // Exercise system
-            var sutHead = Factory.CreateFrom(keys);
+            var sutHead = SkiplistFactory.CreateFrom(keys).Head;
 
             // Verify outcome
-            var results = Utilities.EnumerateKeysInLevel(sutHead);
+            var results = SkiplistUtilities.EnumerateKeysInLevel(sutHead);
             Assert.Equal(expectedResults, results);
 
             // Teardown
@@ -70,7 +70,7 @@ namespace CyclicalSkipListTests
             // Fixture setup
 
             // Exercise system
-            var sutHead = Factory.CreateFrom(keys);
+            var sutHead = SkiplistFactory.CreateFrom(keys).Head;
 
             // Verify outcome
             var currentNode = sutHead;
@@ -95,7 +95,7 @@ namespace CyclicalSkipListTests
             var expectedResult = keys.Count / MaximumGapSize;
 
             // Exercise system
-            var sutHead = Factory.CreateFrom(keys);
+            var sutHead = SkiplistFactory.CreateFrom(keys).Head;
 
             // Verify outcome
             var result = sutHead.DistanceToSelf();
@@ -112,11 +112,11 @@ namespace CyclicalSkipListTests
             // Fixture setup
 
             // Exercise system
-            var sutHead = Factory.CreateFrom(keys);
+            var sutHead = SkiplistFactory.CreateFrom(keys).Head;
 
             // Verify outcome
-            var expectedResult = Utilities.EnumerateNodesInLevel(sutHead).Select(node => node.Right.Down.Left().Key);            
-            var result = Utilities.EnumerateKeysInLevel(sutHead);
+            var expectedResult = SkiplistUtilities.EnumerateNodesInLevel(sutHead).Select(node => node.Right.Down.Left().Key);            
+            var result = SkiplistUtilities.EnumerateKeysInLevel(sutHead);
             Assert.Equal(expectedResult, result);
 
             // Teardown

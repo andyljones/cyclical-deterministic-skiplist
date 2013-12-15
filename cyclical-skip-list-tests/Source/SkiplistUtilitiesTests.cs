@@ -11,14 +11,14 @@ using Xunit.Sdk;
 
 namespace CyclicalSkipListTests
 {
-    public class UtilitiesTests
+    public class SkiplistUtilitiesTests
     {
         private const int LowerLengthBound = 3;
         private const int UpperLengthBound = 10;
 
         [Theory]
         [AutoIsolatedNodeData(LowerLengthBound, UpperLengthBound)]
-        public void BottomOf_GivenAVerticalLinkedList_ReturnsTheBottomNode
+        public void Bottom_GivenAVerticalLinkedList_ReturnsTheBottomNode
             (List<INode<int>> nodes)
         {
             // Fixture setup
@@ -33,7 +33,7 @@ namespace CyclicalSkipListTests
             var listHead = nodes.Last();
 
             // Exercise system
-            var result = Utilities.BottomOf(listHead);
+            var result = listHead.Bottom();
 
             // Verify outcome
             Assert.Equal(nodes[0], result);
@@ -189,7 +189,7 @@ namespace CyclicalSkipListTests
             // Fixture setup
 
             // Exercise system
-            var result = Utilities.EnumerateKeysInLevel(listHead);
+            var result = SkiplistUtilities.EnumerateKeysInLevel(listHead);
 
             // Verify outcome
             var expectedResult = nodes.Select(node => node.Key);
@@ -207,7 +207,7 @@ namespace CyclicalSkipListTests
             // Fixture setup
 
             // Exercise system
-            var result = Utilities.EnumerateNodesInLevel(listHead);
+            var result = SkiplistUtilities.EnumerateNodesInLevel(listHead);
 
             // Verify outcome
             var expectedResult = nodes;
@@ -234,7 +234,7 @@ namespace CyclicalSkipListTests
             var listHead = nodes.Last();
             
             // Exercise system
-            var result = Utilities.EnumerateLevels(listHead).ToList();
+            var result = SkiplistUtilities.EnumerateLevels(listHead).ToList();
 
             // Verify outcome
             result.Reverse();

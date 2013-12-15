@@ -4,26 +4,28 @@ using System.Linq;
 
 namespace CyclicalSkipList
 {
-    public static class Factory
+    public static class SkiplistFactory
     {
         private const int MinimumGapSize = 1;
         private const int MaximumGapSize = 4;
 
-        public static INode<T> CreateFrom<T>(List<T> keys)
+        public static Skiplist<T> CreateFrom<T>(IEnumerable<T> keys)
         {
-            if (keys.Count == 0)
+            var keyList = keys.ToList();
+
+            if (keyList.Count == 0)
             {
                 return null;
             }
 
-            var headOfTopLevel = CreateLinkedListFrom(keys);
+            var headOfTopLevel = CreateLinkedListFrom(keyList);
 
             while (headOfTopLevel.DistanceToSelf() > MaximumGapSize)
             {
                 headOfTopLevel = AddLevelToSkiplist(headOfTopLevel);
             }
 
-            return headOfTopLevel;
+            return new Skiplist<T>(headOfTopLevel);
         }
 
         private static INode<T> AddLevelToSkiplist<T>(INode<T> currentHead)
@@ -33,6 +35,7 @@ namespace CyclicalSkipList
             var currentNewLevelNode = newHead;
             var currentOldLevelNode = newHead.Down;
             
+            //TODO: Can this be rewritten into a for loop?
             var sizeOfRemainingGap = currentNewLevelNode.SizeOfGapTo(newHead);
             while (sizeOfRemainingGap > 2*MaximumGapSize)
             {
@@ -61,7 +64,7 @@ namespace CyclicalSkipList
 
         private static void AssignKeysToLevel<T>(INode<T> head)
         {
-            foreach (var node in Utilities.EnumerateNodesInLevel(head))
+            foreach (var node in SkiplistUtilities.EnumerateNodesInLevel(head))
             {
                 node.Key = node.Right.Down.Left().Key;
             }
