@@ -158,6 +158,29 @@ namespace CyclicalSkipListTests
 
         [Theory]
         [AutoINodeLinkedListData(LowerLengthBound, UpperLengthBound)]
+        public void SizeOfGap_WhenStartAndEndHaveNodesBelowThem_ShouldReturnNumberOfNodesBetweenTheNodeAndItsRightNeighbour
+            (List<INode<int>> nodes)
+        {
+            // Fixture setup
+            var start = Substitute.For<INode<int>>();
+            start.Down = nodes.First();
+
+            var end = Substitute.For<INode<int>>();
+            end.Down = nodes.Last();
+
+            start.Right = end;
+
+            // Exercise system
+            var result = start.SizeOfGap();
+
+            // Verify outcome
+            Assert.Equal(nodes.Count - 1, result);
+
+            // Teardown
+        }
+
+        [Theory]
+        [AutoINodeLinkedListData(LowerLengthBound, UpperLengthBound)]
         public void SizeOfBaseGapTo_WhenStartAndEndHaveNodesBelowThem_ShouldReturnNumberOfInterveningNodesAtBottomLevel
             (List<INode<int>> nodes)
         {

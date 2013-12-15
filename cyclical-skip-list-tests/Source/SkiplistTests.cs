@@ -13,6 +13,9 @@ namespace CyclicalSkipListTests
         private const int MinimumLength = 10;
         private const int MaximumLength = 20;
 
+        private const int MinimumGapSize = 2;
+        private const int MaximumGapSize = 4;
+
         [Theory]
         [AutoSkiplistData(MinimumLength, MaximumLength)]
         public void Contains_WhenTheSkiplistContainsTheGivenKey_ShouldReturnTrue
@@ -32,16 +35,13 @@ namespace CyclicalSkipListTests
 
         [Theory]
         [AutoSkiplistData(MinimumLength, MaximumLength)]
-        public void Contains_WhenTheSkiplistDoesNotContainAKeyWithinTheRangeOfItsKeys_ShouldReturnFalse
-            (Skiplist<int> sut, IList<int> keys)
+        public void Contains_WhenTheSkiplistDoesNotContainAKeyWhichIsWithinTheRangeOfItsKeys_ShouldReturnFalse
+            (Skiplist<int> sut, IList<int> keys, int distinctKey)
         {
             // Fixture setup
-            var rangeOfKeys = Enumerable.Range(keys.Min(), keys.Max() - keys.Min() + 1);
-            var keysNotInSUT = rangeOfKeys.Except(keys).ToList();
-            var key = keysNotInSUT[new Random().Next(0, keysNotInSUT.Count() - 1)];
 
             // Exercise system
-            var result = sut.Contains(key);
+            var result = sut.Contains(distinctKey);
 
             // Verify outcome
             Assert.False(result);
@@ -62,6 +62,50 @@ namespace CyclicalSkipListTests
 
             // Verify outcome
             Assert.False(result);
+
+            // Teardown
+        }
+
+        [Theory]
+        [AutoSkiplistData(MinimumLength, MaximumLength)]
+        public void Insert_GivenAKeyNotInTheSkiplist_ShouldInsertItInTheCorrectPosition
+            (Skiplist<int> sut, IList<int> keys, int distinctKey)
+        {
+            // Fixture setup
+            keys.Add(distinctKey);
+            var expectedResults = keys.OrderBy(item => item);
+
+            // Exercise system
+            sut.Insert(distinctKey);
+
+            // Verify outcome
+            var results = SkiplistUtilities.EnumerateKeysInLevel(sut.Head.Bottom());
+            
+            Assert.Equal(expectedResults, results);
+
+            // Teardown
+        }
+
+        [Theory]
+        [AutoSkiplistData(MinimumLength, MaximumLength)]
+        public void Insert_GivenAKeyNotInTheSkiplistMultipleTimes_ShouldPreserveMaximumGapsize
+            (Skiplist<int> sut, int distinctKey)
+        {
+            // Fixture setup
+
+            // Exercise system
+            for (int i = 0; i < MaximumGapSize+1; i++)
+            {
+                sut.Insert(distinctKey);                
+            }
+
+            // Verify outcome
+            var levels = SkiplistUtilities.EnumerateLevels(sut.Head).Reverse().Skip(1);
+            var nodes = levels.SelectMany(SkiplistUtilities.EnumerateNodesInLevel);
+            var gaps = nodes.Select(node => node.SizeOfGap()).ToList();
+
+            Assert.True(gaps.All(gap => gap <= MaximumGapSize));
+            Assert.True(gaps.All(gap => gap >= MinimumGapSize));
 
             // Teardown
         }

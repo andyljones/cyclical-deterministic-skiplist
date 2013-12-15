@@ -82,15 +82,16 @@ namespace CyclicalSkipListTests
     public class AutoSkiplistData : AutoDataAttribute
     {
         public AutoSkiplistData(int lowerBound, int upperBound)
-            : base(CustomizedFixture<int>(lowerBound, upperBound))
+            : base(CustomizedFixture(lowerBound, upperBound))
         {
         }
 
-        private static IFixture CustomizedFixture<T>(int lowerBound, int upperBound)
+        private static IFixture CustomizedFixture(int lowerBound, int upperBound)
         {
-            var fixture = new Fixture().Customize(new RandomRepeatCountCustomization(lowerBound, upperBound));
-            fixture.Freeze<List<T>>();
-            fixture.Inject(SkiplistFactory.CreateFrom(fixture.Create<List<T>>()));
+            var fixture = new Fixture().Customize(new RandomRepeatCountCustomization(lowerBound, upperBound))
+                                       .Customize(new DistinctIntCustomization());
+
+            fixture.Inject(SkiplistFactory.CreateFrom(fixture.Create<List<int>>()));
 
             return fixture;
         }

@@ -9,7 +9,7 @@ namespace CyclicalSkipListTests
 {
     public class SkiplistFactoryTests
     {
-        private const int MinimumGapSize = 1;
+        private const int MinimumGapSize = 2;
         private const int MaximumGapSize = 4;
 
         [Fact]

@@ -64,6 +64,11 @@ namespace CyclicalSkipList
             return start.Down.Right.DistanceTo(end.Down) + 1;
         }
 
+        public static int SizeOfGap<T>(this INode<T> node)
+        {
+            return node.SizeOfGapTo(node.Right);
+        }
+
         public static int SizeOfBaseGapTo<T>(this INode<T> start, INode<T> end)
         {
             return start.Bottom().Right.DistanceTo(end.Bottom()) + 1;
