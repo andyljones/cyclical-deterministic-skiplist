@@ -20,7 +20,7 @@ namespace CyclicalSkipList
 
             var headOfTopLevel = CreateLinkedListFrom(keyList);
 
-            while (headOfTopLevel.DistanceToSelf() > MaximumGapSize)
+            while (headOfTopLevel.DistanceToSelf() > 1)
             {
                 headOfTopLevel = AddLevelToSkiplist(headOfTopLevel);
             }

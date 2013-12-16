@@ -27,53 +27,50 @@ namespace CyclicalSkipListTests
         }
 
         [Theory]
-        [AutoRandomRepeatCountData(1, MaximumGapSize)]
+        [AutoSkiplistData(1, MaximumGapSize)]
         public void CreateFrom_GivenAMaximumGapSizeNumberOfKeys_ShouldReturnSingleLayerSkiplistWithSameNumberOfElements
-            (List<int> keys)
+            (Skiplist<int> sut, List<int> keys)
         {
             // Fixture setup
             var expectedResult = keys.Count;
 
             // Exercise system
-            var sutHead = SkiplistFactory.CreateFrom(keys).Head;
 
             // Verify outcome
-            var result = sutHead.DistanceToSelf();
+            var result = sut.Head.Bottom().DistanceToSelf();
             Assert.Equal(expectedResult, result);
 
             // Teardown
         }
 
         [Theory]
-        [AutoRandomRepeatCountData(2, MaximumGapSize)]
-        public void CreateFrom_Given2ToAMaximumGapSizeNumberOfKeys_ShouldReturnSingleLayerSkiplistWithOrderedElements
-            (List<int> keys)
+        [AutoSkiplistData(2, MaximumGapSize)]
+        public void CreateFrom_Given2ToAMaximumGapSizeNumberOfKeys_ShouldReturnTwoLayerSkiplistWithOrderedBottomElements
+            (Skiplist<int> sut, List<int> keys)
         {
             // Fixture setup
             var expectedResults = keys.OrderBy(key => key);
 
             // Exercise system
-            var sutHead = SkiplistFactory.CreateFrom(keys).Head;
 
             // Verify outcome
-            var results = SkiplistUtilities.EnumerateKeysInLevel(sutHead);
+            var results = SkiplistUtilities.EnumerateKeysInLevel(sut.Head.Bottom());
             Assert.Equal(expectedResults, results);
 
             // Teardown
         }
 
         [Theory]
-        [AutoRandomRepeatCountData(MaximumGapSize+1, 3*MaximumGapSize)]
+        [AutoSkiplistData(MaximumGapSize+1, 3*MaximumGapSize)]
         public void CreateFrom_GivenMoreThanTheMaximumGapSizeNumberOfKeys_ShouldReturnATopLevelWithGapsOfTheRightSize
-            (List<int> keys)
+            (Skiplist<int> sut, List<int> keys)
         {
             // Fixture setup
 
             // Exercise system
-            var sutHead = SkiplistFactory.CreateFrom(keys).Head;
 
             // Verify outcome
-            var currentNode = sutHead;
+            var currentNode = sut.Head;
             do
             {
                 var gap = currentNode.SizeOfGapTo(currentNode.Right);
@@ -81,42 +78,57 @@ namespace CyclicalSkipListTests
                 Assert.True(gap <= MaximumGapSize);
 
                 currentNode = currentNode.Right;
-            } while (currentNode != sutHead);
+            } while (currentNode != sut.Head);
 
             // Teardown
         }
 
         [Theory]
-        [AutoRandomRepeatCountData(MaximumGapSize+1, 3*MaximumGapSize)]
+        [AutoSkiplistData(MaximumGapSize+1, 3*MaximumGapSize)]
         public void CreateFrom_WhenMakingATwoLevelSkiplist_ShouldReturnSkiplistWithASufficientNumberOfTopLevelNodes
-            (List<int> keys)
+            (Skiplist<int> sut, List<int> keys)
         {
             // Fixture setup
             var expectedResult = keys.Count / MaximumGapSize;
 
             // Exercise system
-            var sutHead = SkiplistFactory.CreateFrom(keys).Head;
 
             // Verify outcome
-            var result = sutHead.DistanceToSelf();
+            var result = sut.Head.Bottom().DistanceToSelf();
             Assert.True(result >= expectedResult);
 
             // Teardown
         }
 
         [Theory]
-        [AutoRandomRepeatCountData(MaximumGapSize+1, 3*MaximumGapSize)]
+        [AutoSkiplistData(MaximumGapSize+1, 3*MaximumGapSize)]
         public void CreateFrom_WhenMakingATwoLevelSkiplist_ShouldCorrectlyAssignKeysToTheTopLevel
-            (List<int> keys)
+            (Skiplist<int> sut, List<int> keys)
         {
             // Fixture setup
 
             // Exercise system
-            var sutHead = SkiplistFactory.CreateFrom(keys).Head;
 
             // Verify outcome
-            var expectedResult = SkiplistUtilities.EnumerateNodesInLevel(sutHead).Select(node => node.Right.Down.Left().Key);            
-            var result = SkiplistUtilities.EnumerateKeysInLevel(sutHead);
+            var expectedResult = SkiplistUtilities.EnumerateNodesInLevel(sut.Head).Select(node => node.Right.Down.Left().Key);
+            var result = SkiplistUtilities.EnumerateKeysInLevel(sut.Head);
+            Assert.Equal(expectedResult, result);
+
+            // Teardown
+        }
+
+        [Theory]
+        [AutoSkiplistData(2, MaximumGapSize)]
+        public void CreateFrom_ShouldAlwaysCreateASkiplistWithASingleNodeOnItsTopLevel
+            (Skiplist<int> sut, List<int> keys)
+        {
+            // Fixture setup
+            var expectedResult = 1;
+
+            // Exercise system
+
+            // Verify outcome
+            var result = SkiplistUtilities.EnumerateNodesInLevel(sut.Head).Count();
             Assert.Equal(expectedResult, result);
 
             // Teardown

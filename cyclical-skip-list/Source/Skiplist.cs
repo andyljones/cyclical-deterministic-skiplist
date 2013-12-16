@@ -60,6 +60,29 @@ namespace CyclicalSkipList
 
         public void Insert(T key)
         {
+            if (Head == null)
+            {
+                CreateNewHead(key);
+                return;
+            }
+
+            var nodeToInsertAt = FindCorrectNodeForKey(key);
+            InsertKey(key, nodeToInsertAt);
+
+            if (Head.Right != Head)
+            {
+                IncreaseSkiplistHeight();
+            }
+        }
+
+        private void CreateNewHead(T key)
+        {
+            Head = new Node<T>(key);
+            Head.Right = Head;
+        }
+
+        private INode<T> FindCorrectNodeForKey(T key)
+        {
             var currentNode = Head;
             bool atCorrectNode = false;
             while (!atCorrectNode)
@@ -78,9 +101,10 @@ namespace CyclicalSkipList
                 else
                 {
                     atCorrectNode = true;
-                    InsertKey(key, currentNode);                    
                 }
             }
+
+            return currentNode;
         }
 
         private void SplitGap(INode<T> currentNode)
@@ -100,6 +124,13 @@ namespace CyclicalSkipList
 
             node.Key = newKey;
             node.Right = newNode;
+        }
+
+        private void IncreaseSkiplistHeight()
+        {
+            var oldHead = Head;
+            CreateNewHead(oldHead.Right.Key);
+            Head.Down = oldHead;
         }
     }
 }

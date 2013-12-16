@@ -68,7 +68,7 @@ namespace CyclicalSkipListTests
 
         [Theory]
         [AutoSkiplistData(MinimumLength, MaximumLength)]
-        public void Insert_GivenAKeyNotInTheSkiplist_ShouldInsertItInTheCorrectPosition
+        public void Insert_ingAKeyNotInTheSkiplist_ShouldInsertItInTheCorrectPosition
             (Skiplist<int> sut, IList<int> keys, int distinctKey)
         {
             // Fixture setup
@@ -88,7 +88,7 @@ namespace CyclicalSkipListTests
 
         [Theory]
         [AutoSkiplistData(MinimumLength, MaximumLength)]
-        public void Insert_GivenAKeyNotInTheSkiplistMultipleTimes_ShouldPreserveMaximumGapsize
+        public void Insert_ingAKeyMultipleTimes_ShouldPreserveMaximumGapsize
             (Skiplist<int> sut, int distinctKey)
         {
             // Fixture setup
@@ -106,6 +106,24 @@ namespace CyclicalSkipListTests
 
             Assert.True(gaps.All(gap => gap <= MaximumGapSize));
             Assert.True(gaps.All(gap => gap >= MinimumGapSize));
+
+            // Teardown
+        }
+
+        [Theory]
+        [AutoData]
+        public void Insert_ingTwoNodesIntoAnEmptySkiplist_ShouldCreateATopLevelWithOneNode
+            (int key)            
+        {
+            // Fixture setup
+            var sut = new Skiplist<int>();
+
+            // Exercise system
+            sut.Insert(key);
+            sut.Insert(key);
+
+            // Verify outcome
+            Assert.Equal(sut.Head, sut.Head.Right);
 
             // Teardown
         }
