@@ -118,24 +118,6 @@ namespace CyclicalSkipListTests
         }
 
         [Theory]
-        [AutoIsolatedNodeData]
-        public void InsertToRight_WhenTwoNodesAreLinked_InsertsAnotherNodeInBetweenThem
-            (INode<int> firstNode, INode<int> lastNode, INode<int> nodeToBeInserted)
-        {
-            // Fixture setup
-            firstNode.Right = lastNode;
-
-            // Exercise system
-            firstNode.InsertToRight(nodeToBeInserted);
-
-            // Verify outcome
-            Assert.Equal(nodeToBeInserted, firstNode.Right);
-            Assert.Equal(lastNode, nodeToBeInserted.Right);
-
-            // Teardown
-        }
-
-        [Theory]
         [AutoINodeLinkedListData(LowerLengthBound, UpperLengthBound)]
         public void SizeOfGapTo_WhenStartAndEndHaveNodesBelowThem_ShouldReturnNumberOfInterveningNodes
             (List<INode<int>> nodes)
@@ -168,7 +150,7 @@ namespace CyclicalSkipListTests
             var end = Substitute.For<INode<int>>();
             end.Down = nodes.Last();
 
-            start.Right = end;
+            start.ConnectTo(end);
 
             // Exercise system
             var result = start.SizeOfGap();
@@ -262,6 +244,60 @@ namespace CyclicalSkipListTests
             // Verify outcome
             result.Reverse();
             Assert.Equal(nodes, result);
+
+            // Teardown
+        }
+
+        [Theory]
+        [AutoIsolatedNodeData]
+        public void ConnectTo_OnTwoNodes_ShouldSetTheirPointersCorrectly
+            (INode<int> leftNode, INode<int> rightNode)
+        {
+            // Fixture setup
+
+            // Exercise system
+            leftNode.ConnectTo(rightNode);
+
+            // Verify outcome
+            Assert.Equal(rightNode, leftNode.Right);
+            Assert.Equal(leftNode, rightNode.Left);
+
+            // Teardown
+        }
+
+        [Theory]
+        [AutoIsolatedNodeData]
+        public void DisconnectLeft_OnTwoNodes_ShouldSetTheirRelevantPointersToNull
+            (INode<int> leftNode, INode<int> rightNode)
+        {
+            // Fixture setup
+            leftNode.ConnectTo(rightNode);
+
+            // Exercise system
+            rightNode.DisconnectLeft();
+
+            // Verify outcome
+            Assert.Equal(null, leftNode.Right);
+            Assert.Equal(null, rightNode.Left);
+
+            // Teardown
+        }
+
+
+        [Theory]
+        [AutoIsolatedNodeData]
+        public void DisconnectRight_OnTwoNodes_ShouldSetTheirRelevantPointersToNull
+            (INode<int> leftNode, INode<int> rightNode)
+        {
+            // Fixture setup
+            leftNode.ConnectTo(rightNode);
+
+            // Exercise system
+            leftNode.DisconnectRight();
+
+            // Verify outcome
+            Assert.Equal(null, rightNode.Left);
+            Assert.Equal(null, leftNode.Right);
 
             // Teardown
         }

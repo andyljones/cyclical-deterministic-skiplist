@@ -41,7 +41,7 @@ namespace CyclicalSkipList
             {
                 currentOldLevelNode = currentOldLevelNode.RightBy(MaximumGapSize);
                 var newFirstLevelNode = new Node<T>(default(T)) { Down = currentOldLevelNode };
-                currentNewLevelNode.Right = newFirstLevelNode;
+                currentNewLevelNode.ConnectTo(newFirstLevelNode);
 
                 currentNewLevelNode = newFirstLevelNode;
                 sizeOfRemainingGap = currentNewLevelNode.SizeOfGapTo(newHead);
@@ -51,12 +51,12 @@ namespace CyclicalSkipList
             {
                 currentOldLevelNode = currentOldLevelNode.RightBy(sizeOfRemainingGap / 2);
                 var newFirstLevelNode = new Node<T>(default(T)) { Down = currentOldLevelNode };
-                currentNewLevelNode.Right = newFirstLevelNode;
+                currentNewLevelNode.ConnectTo(newFirstLevelNode);
 
                 currentNewLevelNode = newFirstLevelNode;
             }
 
-            currentNewLevelNode.Right = newHead;
+            currentNewLevelNode.ConnectTo(newHead);
             AssignKeysToLevel(newHead);
 
             return newHead;
@@ -78,10 +78,10 @@ namespace CyclicalSkipList
             INode<T> currentNode = head;
             foreach (var key in sortedKeys.Skip(1))
             {
-                currentNode.InsertToRight(new Node<T>(key));
+                currentNode.ConnectTo(new Node<T>(key));
                 currentNode = currentNode.Right;
             }
-            currentNode.Right = head;
+            currentNode.ConnectTo(head);
 
             return head;
         }

@@ -53,12 +53,6 @@ namespace CyclicalSkipList
             return node.Right.DistanceTo(node) + 1;
         }
 
-        public static void InsertToRight<T>(this INode<T> node, INode<T> nodeToBeInserted)
-        {
-            nodeToBeInserted.Right = node.Right;
-            node.Right = nodeToBeInserted;
-        }
-
         public static int SizeOfGapTo<T>(this INode<T> start, INode<T> end)
         {
             return start.Down.Right.DistanceTo(end.Down) + 1;
@@ -105,6 +99,32 @@ namespace CyclicalSkipList
                 currentNode = currentNode.Down;
             }
             while (currentNode != null);
+        }
+
+        public static void ConnectTo<T>(this INode<T> leftNode, INode<T> rightNode)
+        {
+            leftNode.Right = rightNode;
+            rightNode.Left = leftNode;
+        }
+
+        public static void DisconnectLeft<T>(this INode<T> node)
+        {
+            if (node.Left != null)
+            {
+                node.Left.Right = null;
+            }
+
+            node.Left = null;
+        }
+
+        public static void DisconnectRight<T>(this INode<T> node)
+        {
+            if (node.Right != null)
+            {
+                node.Right.Left = null;
+            }
+
+            node.Right = null;
         }
     }
 }

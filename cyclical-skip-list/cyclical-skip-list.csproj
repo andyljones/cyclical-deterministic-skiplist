@@ -44,7 +44,7 @@
     <Compile Include="Source\INode.cs" />
     <Compile Include="Source\SkiplistFactory.cs" />
     <Compile Include="Source\Skiplist.cs" />
-    <Compile Include="Source\StringFormatter.cs" />
+    <Compile Include="Source\SkiplistStringFormatter.cs" />
     <Compile Include="Source\SkiplistUtilities.cs" />
   </ItemGroup>
   <ItemGroup />

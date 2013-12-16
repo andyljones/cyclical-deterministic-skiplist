@@ -65,13 +65,15 @@ namespace CyclicalSkipListTests
             var keys = fixture.Create<List<T>>();
             var nodes = keys.Select(i => { var node = Substitute.For<INode<T>>();
                                              node.Key = i;
+                                             node.Left = null;
+                                             node.Right = null;
                                              node.Down = null;
                                              return node;
                                          }).ToList();
 
             for (int i = 0; i < nodes.Count - 1; i++)
             {
-                nodes[i].Right = nodes[i + 1];
+                nodes[i].ConnectTo(nodes[i + 1]);
             }
             nodes[nodes.Count - 1].Right = nodes[0];
             

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using CyclicalSkipList;
 using Ploeh.AutoFixture.Xunit;
@@ -68,7 +69,7 @@ namespace CyclicalSkipListTests
 
         [Theory]
         [AutoSkiplistData(MinimumLength, MaximumLength)]
-        public void Insert_ingAKeyNotInTheSkiplist_ShouldInsertItInTheCorrectPosition
+        public void Insert_ingAKeyIntoTheSkiplist_ShouldInsertItInTheCorrectPosition
             (Skiplist<int> sut, IList<int> keys, int distinctKey)
         {
             // Fixture setup
@@ -111,6 +112,28 @@ namespace CyclicalSkipListTests
         }
 
         [Theory]
+        [AutoSkiplistData(MinimumLength, MaximumLength)]
+        public void Insert_ingAKeyMultipleTimes_ShouldLeaveSkiplistProperlyConnected
+            (Skiplist<int> sut, int distinctKey)
+        {
+            // Fixture setup
+
+            // Exercise system
+            for (int i = 0; i < MaximumGapSize + 1; i++)
+            {
+                sut.Insert(distinctKey);
+            }
+
+            // Verify outcome
+            var levels = SkiplistUtilities.EnumerateLevels(sut.Head).Reverse().Skip(1);
+            var nodes = levels.SelectMany(SkiplistUtilities.EnumerateNodesInLevel);
+
+            Assert.True(nodes.All(node => node.Right.Left == node));
+
+            // Teardown
+        }
+
+        [Theory]
         [AutoData]
         public void Insert_ingTwoNodesIntoAnEmptySkiplist_ShouldCreateATopLevelWithOneNode
             (int key)            
@@ -124,6 +147,24 @@ namespace CyclicalSkipListTests
 
             // Verify outcome
             Assert.Equal(sut.Head, sut.Head.Right);
+
+            // Teardown
+        }
+
+        [Theory]
+        [AutoSkiplistData(1, MaximumGapSize)]
+        public void Insert_ingAKeyIntoTheSkiplist_ShouldLeaveTheBottomLevelProperlyConnected
+            (Skiplist<int> sut, int distinctKey)
+        {
+            // Fixture setup
+            
+            // Exercise system
+            sut.Insert(distinctKey);
+
+            // Verify outcome
+            var nodes = SkiplistUtilities.EnumerateNodesInLevel(sut.Head.Bottom()).ToList();
+
+            Assert.True(nodes.All(node => node.Right.Left == node));
 
             // Teardown
         }

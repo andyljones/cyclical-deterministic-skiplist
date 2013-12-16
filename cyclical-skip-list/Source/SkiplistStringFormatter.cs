@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace CyclicalSkipList
 {
-    public static class StringFormatter
+    public static class SkiplistStringFormatter
     {
-        public static string ConvertToString<T>(this INode<T> start)
+        public static string ConvertToString<T>(INode<T> start)
         {
             var levelFormatString = CreateFormatString(start);
             var headsOfLevels = SkiplistUtilities.EnumerateLevels(start);

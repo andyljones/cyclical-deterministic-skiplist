@@ -33,6 +33,7 @@ namespace CyclicalSkipListTests
             {
                 var node = Substitute.For<INode<T>>();
                 node.Key = fixture.Create<T>();
+                node.Left = null;
                 node.Right = null;
                 node.Down = null;
                 return node;

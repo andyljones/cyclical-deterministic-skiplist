@@ -78,7 +78,7 @@ namespace CyclicalSkipList
         private void CreateNewHead(T key)
         {
             Head = new Node<T>(key);
-            Head.Right = Head;
+            Head.ConnectTo(Head);
         }
 
         private INode<T> FindCorrectNodeForKey(T key)
@@ -112,18 +112,20 @@ namespace CyclicalSkipList
             var gapSize = currentNode.SizeOfGap();
             var gapMidpoint = currentNode.Down.RightBy(gapSize/2);
 
-            var newNode = new Node<T>(currentNode.Key) {Down = gapMidpoint, Right = currentNode.Right};
-            currentNode.Right = newNode;
+            var newNode = new Node<T>(currentNode.Key) {Down = gapMidpoint};
+            newNode.ConnectTo(currentNode.Right);
+            currentNode.ConnectTo(newNode);
             currentNode.Key = currentNode.Down.RightBy(gapSize/2 - 1).Key;
 
         }
 
         private void InsertKey(T newKey, INode<T> node)
         {
-            var newNode = new Node<T>(node.Key) {Right = node.Right};
+            var newNode = new Node<T>(node.Key);
 
             node.Key = newKey;
-            node.Right = newNode;
+            newNode.ConnectTo(node.Right);            
+            node.ConnectTo(newNode);
         }
 
         private void IncreaseSkiplistHeight()
@@ -131,6 +133,11 @@ namespace CyclicalSkipList
             var oldHead = Head;
             CreateNewHead(oldHead.Right.Key);
             Head.Down = oldHead;
+        }
+
+        public override string ToString()
+        {
+            return SkiplistStringFormatter.ConvertToString(Head);
         }
     }
 }
