@@ -30,7 +30,8 @@ namespace CyclicalSkipList
 
         private static INode<T> AddLevelToSkiplist<T>(INode<T> currentHead)
         {
-            var newHead = new Node<T>(default(T)) { Down = currentHead };
+            var newHead = new Node<T>(default(T));
+            newHead.ConnectDownTo(currentHead);
 
             var currentNewLevelNode = newHead;
             var currentOldLevelNode = newHead.Down;
@@ -40,7 +41,8 @@ namespace CyclicalSkipList
             while (sizeOfRemainingGap > 2*MaximumGapSize)
             {
                 currentOldLevelNode = currentOldLevelNode.RightBy(MaximumGapSize);
-                var newFirstLevelNode = new Node<T>(default(T)) { Down = currentOldLevelNode };
+                var newFirstLevelNode = new Node<T>(default(T));
+                newFirstLevelNode.ConnectDownTo(currentOldLevelNode);
                 currentNewLevelNode.ConnectTo(newFirstLevelNode);
 
                 currentNewLevelNode = newFirstLevelNode;
@@ -50,7 +52,8 @@ namespace CyclicalSkipList
             if (sizeOfRemainingGap > MaximumGapSize)
             {
                 currentOldLevelNode = currentOldLevelNode.RightBy(sizeOfRemainingGap / 2);
-                var newFirstLevelNode = new Node<T>(default(T)) { Down = currentOldLevelNode };
+                var newFirstLevelNode = new Node<T>(default(T));
+                newFirstLevelNode.ConnectDownTo(currentOldLevelNode);
                 currentNewLevelNode.ConnectTo(newFirstLevelNode);
 
                 currentNewLevelNode = newFirstLevelNode;

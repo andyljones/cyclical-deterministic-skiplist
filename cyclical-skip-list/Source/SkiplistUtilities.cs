@@ -107,24 +107,10 @@ namespace CyclicalSkipList
             rightNode.Left = leftNode;
         }
 
-        public static void DisconnectLeft<T>(this INode<T> node)
+        public static void ConnectDownTo<T>(this INode<T> upperNode, INode<T> lowerNode)
         {
-            if (node.Left != null)
-            {
-                node.Left.Right = null;
-            }
-
-            node.Left = null;
-        }
-
-        public static void DisconnectRight<T>(this INode<T> node)
-        {
-            if (node.Right != null)
-            {
-                node.Right.Left = null;
-            }
-
-            node.Right = null;
+            upperNode.Down = lowerNode;
+            lowerNode.Up = upperNode;
         }
     }
 }

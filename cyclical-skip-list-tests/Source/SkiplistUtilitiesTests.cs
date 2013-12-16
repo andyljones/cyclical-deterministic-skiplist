@@ -267,39 +267,20 @@ namespace CyclicalSkipListTests
 
         [Theory]
         [AutoIsolatedNodeData]
-        public void DisconnectLeft_OnTwoNodes_ShouldSetTheirRelevantPointersToNull
-            (INode<int> leftNode, INode<int> rightNode)
+        public void ConnectDownTo_OnTwoNodes_ShouldSetTheirPointersCorrectly
+            (INode<int> upperNode, INode<int> lowerNode)
         {
             // Fixture setup
-            leftNode.ConnectTo(rightNode);
 
             // Exercise system
-            rightNode.DisconnectLeft();
+            upperNode.ConnectDownTo(lowerNode);
 
             // Verify outcome
-            Assert.Equal(null, leftNode.Right);
-            Assert.Equal(null, rightNode.Left);
+            Assert.Equal(lowerNode, upperNode.Down);
+            Assert.Equal(upperNode, lowerNode.Up);
 
             // Teardown
         }
 
-
-        [Theory]
-        [AutoIsolatedNodeData]
-        public void DisconnectRight_OnTwoNodes_ShouldSetTheirRelevantPointersToNull
-            (INode<int> leftNode, INode<int> rightNode)
-        {
-            // Fixture setup
-            leftNode.ConnectTo(rightNode);
-
-            // Exercise system
-            leftNode.DisconnectRight();
-
-            // Verify outcome
-            Assert.Equal(null, rightNode.Left);
-            Assert.Equal(null, leftNode.Right);
-
-            // Teardown
-        }
     }
 }

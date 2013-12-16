@@ -83,6 +83,13 @@ namespace CyclicalSkipList
 
         private INode<T> FindCorrectNodeForKey(T key)
         {
+            INode<T> nodeAboveGap;
+            return FindCorrectNodeForKey(key, out nodeAboveGap);
+        }
+
+        private INode<T> FindCorrectNodeForKey(T key, out INode<T> nodeAboveGap)
+        {
+            nodeAboveGap = null;
             var currentNode = Head;
             bool atCorrectNode = false;
             while (!atCorrectNode)
@@ -96,6 +103,7 @@ namespace CyclicalSkipList
 
                 if (currentNode.Down != null)
                 {
+                    nodeAboveGap = currentNode;
                     currentNode = currentNode.Down;
                 }
                 else
@@ -112,7 +120,8 @@ namespace CyclicalSkipList
             var gapSize = currentNode.SizeOfGap();
             var gapMidpoint = currentNode.Down.RightBy(gapSize/2);
 
-            var newNode = new Node<T>(currentNode.Key) {Down = gapMidpoint};
+            var newNode = new Node<T>(currentNode.Key);
+            newNode.ConnectDownTo(gapMidpoint);
             newNode.ConnectTo(currentNode.Right);
             currentNode.ConnectTo(newNode);
             currentNode.Key = currentNode.Down.RightBy(gapSize/2 - 1).Key;
@@ -132,12 +141,29 @@ namespace CyclicalSkipList
         {
             var oldHead = Head;
             CreateNewHead(oldHead.Right.Key);
-            Head.Down = oldHead;
+            Head.ConnectDownTo(oldHead);
         }
 
         public override string ToString()
         {
             return SkiplistStringFormatter.ConvertToString(Head);
+        }
+
+        public void Remove(T key)
+        {
+            INode<T> nodeAboveGap;
+            var currentNode = FindCorrectNodeForKey(key, out nodeAboveGap);
+
+            if (currentNode.Right != nodeAboveGap.Right.Down)
+            {
+                currentNode.Key = currentNode.Right.Key;
+                currentNode.ConnectTo(currentNode.Right.Right);
+            }
+            else
+            {
+                currentNode.Key = currentNode.Left.Key;
+                currentNode.Left.Left.ConnectTo(currentNode);
+            }
         }
     }
 }

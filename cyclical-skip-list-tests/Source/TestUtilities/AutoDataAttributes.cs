@@ -67,6 +67,7 @@ namespace CyclicalSkipListTests
                                              node.Key = i;
                                              node.Left = null;
                                              node.Right = null;
+                                             node.Up = null;
                                              node.Down = null;
                                              return node;
                                          }).ToList();

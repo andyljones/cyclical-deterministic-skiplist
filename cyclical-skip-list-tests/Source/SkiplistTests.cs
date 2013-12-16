@@ -168,5 +168,44 @@ namespace CyclicalSkipListTests
 
             // Teardown
         }
+
+        [Theory]
+        [AutoSkiplistData(3, MaximumGapSize)]
+        public void Remove_ingAKeyFromASize2To4Gap_ShouldRemoveTheCorrespondingNodeFromTheBottomLayer
+            (Skiplist<int> sut, List<int> keys)
+        {
+            // Fixture setup
+            var keyToBeRemoved = keys[new Random().Next(0, keys.Count - 1)];
+
+            keys.Remove(keyToBeRemoved);
+            var expectedResults = keys.OrderBy(key => key);
+            
+            // Exercise system
+            sut.Remove(keyToBeRemoved);
+
+            // Verify outcome
+            var results = SkiplistUtilities.EnumerateKeysInLevel(sut.Head.Bottom());
+
+            Assert.Equal(expectedResults, results);
+
+            // Teardown
+        }
+
+        [Theory]
+        [AutoSkiplistData(1, MaximumGapSize)]
+        public void Remove_ingTheFirstKeyInASkiplist_ShouldPreserveTheConnectionsBetweenLayers
+            (Skiplist<int> sut, List<int> keys)
+        {
+            // Fixture setup
+            var keyToBeRemoved = keys.OrderBy(key => key).Last();
+
+            // Exercise system
+            sut.Remove(keyToBeRemoved);
+
+            // Verify outcome
+            Assert.NotNull(sut.Head.Down);
+
+            // Teardown
+        }
     }
 }

@@ -112,6 +112,7 @@ namespace CyclicalSkipListTests
             // Verify outcome
             var nodes = SkiplistUtilities.EnumerateNodesInLevel(sut.Head.Down);
             Assert.True(nodes.All(node => node.Right.Left == node));
+            Assert.True(nodes.All(node => node.Down.Up == node));
 
             // Teardown
         }
