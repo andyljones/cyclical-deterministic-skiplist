@@ -13,5 +13,10 @@
         {
             Key = key;
         }
+
+        public override string ToString()
+        {
+            return "<|"+ Key +"|>";
+        }
     }
 }

@@ -66,7 +66,7 @@ namespace CyclicalSkipList
                 return;
             }
 
-            var nodeToInsertAt = FindCorrectNodeForKey(key);
+            var nodeToInsertAt = FindNodeContainingKey(key);
             InsertKey(key, nodeToInsertAt);
 
             if (Head.Right != Head)
@@ -81,15 +81,8 @@ namespace CyclicalSkipList
             Head.ConnectTo(Head);
         }
 
-        private INode<T> FindCorrectNodeForKey(T key)
+        private INode<T> FindNodeContainingKey(T key)
         {
-            INode<T> nodeAboveGap;
-            return FindCorrectNodeForKey(key, out nodeAboveGap);
-        }
-
-        private INode<T> FindCorrectNodeForKey(T key, out INode<T> nodeAboveGap)
-        {
-            nodeAboveGap = null;
             var currentNode = Head;
             bool atCorrectNode = false;
             while (!atCorrectNode)
@@ -103,7 +96,6 @@ namespace CyclicalSkipList
 
                 if (currentNode.Down != null)
                 {
-                    nodeAboveGap = currentNode;
                     currentNode = currentNode.Down;
                 }
                 else
@@ -151,18 +143,45 @@ namespace CyclicalSkipList
 
         public void Remove(T key)
         {
-            INode<T> nodeAboveGap;
-            var currentNode = FindCorrectNodeForKey(key, out nodeAboveGap);
+            var atCorrectNode = false;
+            var currentNode = Head;
+            while (!atCorrectNode)
+            {
+                currentNode = FindGapContainingKey(key, currentNode);
 
-            if (currentNode.Right != nodeAboveGap.Right.Down)
-            {
-                currentNode.Key = currentNode.Right.Key;
-                currentNode.ConnectTo(currentNode.Right.Right);
+                var isBottom = currentNode.Down == null;
+
+                if (isBottom)
+                {
+                    atCorrectNode = true;
+                    TryRemoveBottomNode(currentNode, key);
+                }
+                else
+                {
+                    currentNode = DescendIntoGap(currentNode);
+                }
             }
-            else
+        }
+
+        private INode<T> DescendIntoGap(INode<T> node)
+        {
+            return node.Down;
+        }
+
+        private void TryRemoveBottomNode(INode<T> node, T key)
+        {
+            bool containsKey = _equals(node.Key, key);
+            bool isLastNodeInGap = node.Right.Up != null;
+
+            if (containsKey && !isLastNodeInGap)
             {
-                currentNode.Key = currentNode.Left.Key;
-                currentNode.Left.Left.ConnectTo(currentNode);
+                node.Key = node.Right.Key;
+                node.ConnectTo(node.Right.Right);
+            } 
+            else if (containsKey && isLastNodeInGap)
+            {
+                node.Key = node.Left.Key;
+                node.Left.Left.ConnectTo(node);
             }
         }
     }

@@ -99,26 +99,6 @@ namespace CyclicalSkipListTests
 
         [Theory]
         [AutoINodeLinkedListData(LowerLengthBound, UpperLengthBound)]
-        public void Left_OnAHorizontalLinkedList_ReturnsTheNodeLeftOfTheSpecifiedNode
-            (List<INode<int>> nodes, INode<int> sutHead)
-        {
-            // Fixture setup
-
-            // Exercise system
-            var result0 = nodes[0 % nodes.Count].Left();
-            var result1 = nodes[2 % nodes.Count].Left();
-            var result2 = nodes[nodes.Count - 1].Left();
-
-            // Verify outcome
-            Assert.Equal(nodes[nodes.Count - 1], result0);
-            Assert.Equal(nodes[1 % nodes.Count], result1);
-            Assert.Equal(nodes[(nodes.Count - 2) % nodes.Count], result2);
-
-            // Teardown
-        }
-
-        [Theory]
-        [AutoINodeLinkedListData(LowerLengthBound, UpperLengthBound)]
         public void SizeOfGapTo_WhenStartAndEndHaveNodesBelowThem_ShouldReturnNumberOfInterveningNodes
             (List<INode<int>> nodes)
         {

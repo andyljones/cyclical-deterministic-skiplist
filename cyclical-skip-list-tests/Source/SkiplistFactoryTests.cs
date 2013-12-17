@@ -145,7 +145,7 @@ namespace CyclicalSkipListTests
             Debug.WriteLine(sut.ToString());
 
             // Verify outcome
-            var expectedResult = SkiplistUtilities.EnumerateNodesInLevel(sut.Head.Down).Select(node => node.Right.Down.Left().Key);
+            var expectedResult = SkiplistUtilities.EnumerateNodesInLevel(sut.Head.Down).Select(node => node.Right.Down.Left.Key);
             var result = SkiplistUtilities.EnumerateKeysInLevel(sut.Head.Down);
             Assert.Equal(expectedResult, result);
 

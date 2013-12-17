@@ -69,7 +69,7 @@ namespace CyclicalSkipList
         {
             foreach (var node in SkiplistUtilities.EnumerateNodesInLevel(head))
             {
-                node.Key = node.Right.Down.Left().Key;
+                node.Key = node.Right.Down.Left.Key;
             }
         }
 

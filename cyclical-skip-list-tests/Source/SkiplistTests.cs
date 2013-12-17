@@ -17,6 +17,8 @@ namespace CyclicalSkipListTests
         private const int MinimumGapSize = 2;
         private const int MaximumGapSize = 4;
 
+        private const int TIMEOUT = 5000;
+
         [Theory]
         [AutoSkiplistData(MinimumLength, MaximumLength)]
         public void Contains_WhenTheSkiplistContainsTheGivenKey_ShouldReturnTrue
@@ -169,9 +171,9 @@ namespace CyclicalSkipListTests
             // Teardown
         }
 
-        [Theory]
+        [Theory(Timeout = TIMEOUT)]
         [AutoSkiplistData(3, MaximumGapSize)]
-        public void Remove_ingAKeyFromASize2To4Gap_ShouldRemoveTheCorrespondingNodeFromTheBottomLayer
+        public void Remove_ingAKeyFromGapLargerThan2_ShouldRemoveTheCorrespondingNodeFromTheBottomLayer
             (Skiplist<int> sut, List<int> keys)
         {
             // Fixture setup
@@ -191,9 +193,9 @@ namespace CyclicalSkipListTests
             // Teardown
         }
 
-        [Theory]
-        [AutoSkiplistData(1, MaximumGapSize)]
-        public void Remove_ingTheFirstKeyInASkiplist_ShouldPreserveTheConnectionsBetweenLayers
+        [Theory(Timeout = TIMEOUT)]
+        [AutoSkiplistData(3, MaximumGapSize)]
+        public void Remove_ingTheLastKeyInAGapLargerThan2_ShouldPreserveTheConnectionsBetweenLayers
             (Skiplist<int> sut, List<int> keys)
         {
             // Fixture setup
@@ -204,6 +206,67 @@ namespace CyclicalSkipListTests
 
             // Verify outcome
             Assert.NotNull(sut.Head.Down);
+
+            // Teardown
+        }
+
+        [Theory(Timeout = TIMEOUT)]
+        [AutoSkiplistData(2*MaximumGapSize, 2*MaximumGapSize)]
+        public void Remove_ingAKeyFromASize2GapWithASize3orMoreGapToTheRight_ShouldPreserveMinimumGapSize
+            (Skiplist<int> sut, List<int> keys)
+        {
+            // Fixture setup - reduce first gap to size 2:
+            var sizeOfFirstGap = sut.Head.Down.SizeOfGap();
+            var firstNodeInGap = sut.Head.Bottom();
+            var lastNodeInGap = sut.Head.Bottom().RightBy(sizeOfFirstGap-1);
+            firstNodeInGap.ConnectTo(lastNodeInGap);
+
+            var keyToBeRemoved = keys.OrderBy(key => key).First();
+
+            // Exercise system
+            sut.Remove(keyToBeRemoved);
+
+            // Verify outcome
+            var results = SkiplistUtilities.EnumerateNodesInLevel(sut.Head.Down)
+                                           .Select(node => node.SizeOfGap())
+                                           .ToList();
+
+            Assert.True(results.All(gapSize => gapSize >= MinimumGapSize));
+            Assert.True(results.All(gapSize => gapSize <= MaximumGapSize));
+
+            // Teardown
+        }
+
+        [Theory(Timeout = TIMEOUT)]
+        [AutoSkiplistData(2 * MaximumGapSize, 2 * MaximumGapSize)]
+        public void Remove_ingAKeyFromASize2GapWithASize2GapToTheRight_ShouldPreserveMinimumGapSize
+            (Skiplist<int> sut, List<int> keys)
+        {
+            //Fixture setup - reduce first & second gap to size 2:
+            var sizeOfFirstGap = sut.Head.Down.SizeOfGap();
+            var firstNodeInFirstGap = sut.Head.Bottom();
+            var lastNodeInFirstGap = firstNodeInFirstGap.RightBy(sizeOfFirstGap - 1);
+            firstNodeInFirstGap.ConnectTo(lastNodeInFirstGap);
+
+            var sizeOfLastGap = sut.Head.Down.Right.SizeOfGap();
+            var firstNodeInSecondGap = sut.Head.Down.Right.Down;
+            var lastNodeInSecondGap = firstNodeInSecondGap.RightBy(sizeOfLastGap - 1);
+            firstNodeInSecondGap.ConnectTo(lastNodeInSecondGap);
+
+            var keyToBeRemoved = keys.OrderBy(key => key).First();
+
+            // Exercise system
+            sut.Remove(keyToBeRemoved);
+
+            Debug.WriteLine(sut);
+            Debug.WriteLine(keyToBeRemoved);
+            // Verify outcome
+            var results = SkiplistUtilities.EnumerateNodesInLevel(sut.Head.Down)
+                                           .Select(node => node.SizeOfGap())
+                                           .ToList();
+
+            Assert.True(results.All(gapSize => gapSize >= MinimumGapSize));
+            Assert.True(results.All(gapSize => gapSize <= MaximumGapSize));
 
             // Teardown
         }

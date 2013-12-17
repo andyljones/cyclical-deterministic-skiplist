@@ -37,17 +37,6 @@ namespace CyclicalSkipList
             return currentNode;
         }
 
-        public static INode<T> Left<T>(this INode<T> start)
-        {
-            var currentNode = start;
-            while (currentNode.Right != start)
-            {
-                currentNode = currentNode.Right;
-            }
-
-            return currentNode;
-        }
-
         public static int DistanceToSelf<T>(this INode<T> node)
         {
             return node.Right.DistanceTo(node) + 1;
