@@ -11,6 +11,7 @@ namespace CyclicalSkipList
         private readonly Func<T, T, int> _compare;
         private readonly Func<T, T, bool> _equals;
 
+        private const int MinimumGapSize = 2;
         private const int MaximumGapSize = 4;
 
         public Skiplist()
@@ -144,7 +145,7 @@ namespace CyclicalSkipList
         public void Remove(T key)
         {
             var atCorrectNode = false;
-            var currentNode = Head;
+            var currentNode = Head.Down;
             while (!atCorrectNode)
             {
                 currentNode = FindGapContainingKey(key, currentNode);
@@ -158,14 +159,74 @@ namespace CyclicalSkipList
                 }
                 else
                 {
-                    currentNode = DescendIntoGap(currentNode);
+                    AmendGapSize(currentNode);
+                    currentNode = currentNode.Down;
+
                 }
+            }
+
+            if (Head.Down.Right == Head.Down)
+            {
+                Head.Down.Up = null;
+                Head = Head.Down;
             }
         }
 
-        private INode<T> DescendIntoGap(INode<T> node)
+        private void AmendGapSize(INode<T> nodeOfGap)
         {
-            return node.Down;
+            bool needsExpanding = nodeOfGap.SizeOfGap() <= MinimumGapSize;
+            bool isLastGap = nodeOfGap.Right.Up != null;
+
+            if (needsExpanding && !isLastGap)
+            {
+                ExpandIntoNextGap(nodeOfGap);
+            }
+            else if (needsExpanding && isLastGap)
+            {
+                ExpandIntoPreviousGap(nodeOfGap);
+            }
+        }
+
+        private void ExpandIntoPreviousGap(INode<T> node)
+        {
+            var nodeOfPreviousGap = node.Left;
+            bool shouldMergeGaps = nodeOfPreviousGap.SizeOfGap() <= MinimumGapSize;
+
+            if (shouldMergeGaps)
+            {
+                TryRemoveNode(node);
+            }
+            else
+            {
+                nodeOfPreviousGap.Key = node.Down.Left.Left.Key;
+                node.Down.Up = null;
+                node.ConnectDownTo(node.Down.Left);
+            }
+        }
+
+        private void ExpandIntoNextGap(INode<T> node)
+        {
+            var nodeOfNextGap = node.Right;
+            bool shouldMergeGaps = nodeOfNextGap.SizeOfGap() <= MinimumGapSize;
+
+            if (shouldMergeGaps)
+            {
+                TryRemoveNode(nodeOfNextGap);
+            }
+            else
+            {
+                node.Key = nodeOfNextGap.Down.Key;
+                nodeOfNextGap.Down.Up = null;
+                nodeOfNextGap.ConnectDownTo(nodeOfNextGap.Down.Right);
+            }
+        }
+
+        private void TryRemoveNode(INode<T> node)
+        {
+            node.Down.Up = null;
+            node.Left.ConnectTo(node.Right);
+
+            node.Left.Key = node.Key;
         }
 
         private void TryRemoveBottomNode(INode<T> node, T key)
@@ -180,8 +241,17 @@ namespace CyclicalSkipList
             } 
             else if (containsKey && isLastNodeInGap)
             {
-                node.Key = node.Left.Key;
-                node.Left.Left.ConnectTo(node);
+                node.Left.ConnectTo(node.Right);
+                CleanNodeFromSkiplist(node);
+            }
+        }
+
+        private void CleanNodeFromSkiplist(INode<T> node)
+        {
+            while(node.Right.Up != null)
+            {
+                node = node.Right.Up.Left;
+                node.Key = node.Right.Down.Left.Key;
             }
         }
     }

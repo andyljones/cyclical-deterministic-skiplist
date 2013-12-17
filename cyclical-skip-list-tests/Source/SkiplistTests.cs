@@ -221,7 +221,7 @@ namespace CyclicalSkipListTests
             var lastNodeInGap = sut.Head.Bottom().RightBy(sizeOfFirstGap-1);
             firstNodeInGap.ConnectTo(lastNodeInGap);
 
-            var keyToBeRemoved = keys.OrderBy(key => key).First();
+            var keyToBeRemoved = keys.Min();
 
             // Exercise system
             sut.Remove(keyToBeRemoved);
@@ -253,13 +253,38 @@ namespace CyclicalSkipListTests
             var lastNodeInSecondGap = firstNodeInSecondGap.RightBy(sizeOfLastGap - 1);
             firstNodeInSecondGap.ConnectTo(lastNodeInSecondGap);
 
-            var keyToBeRemoved = keys.OrderBy(key => key).First();
+            var keyToBeRemoved = keys.Min();
 
             // Exercise system
             sut.Remove(keyToBeRemoved);
 
-            Debug.WriteLine(sut);
-            Debug.WriteLine(keyToBeRemoved);
+            // Verify outcome
+            var results = SkiplistUtilities.EnumerateNodesInLevel(sut.Head)
+                                           .Select(node => node.SizeOfGap())
+                                           .ToList();
+
+            Assert.True(results.All(gapSize => gapSize >= MinimumGapSize));
+            Assert.True(results.All(gapSize => gapSize <= MaximumGapSize));
+
+            // Teardown
+        }
+
+        [Theory(Timeout = TIMEOUT)]
+        [AutoSkiplistData(2 * MaximumGapSize, 2 * MaximumGapSize)]
+        public void Remove_ingAKeyFromASize2GapWithNoGapToTheRightAndASize3orMoreGapToTheLeft_ShouldPreserveMinimumGapSize
+            (Skiplist<int> sut, List<int> keys)
+        {
+            // Fixture setup - reduce first gap to size 2:
+            var sizeOfFirstGap = sut.Head.Down.SizeOfGap();
+            var firstNodeInGap = sut.Head.Bottom();
+            var lastNodeInGap = sut.Head.Bottom().RightBy(sizeOfFirstGap - 1);
+            firstNodeInGap.ConnectTo(lastNodeInGap);
+
+            var keyToBeRemoved = keys.Max();
+
+            // Exercise system
+            sut.Remove(keyToBeRemoved);
+
             // Verify outcome
             var results = SkiplistUtilities.EnumerateNodesInLevel(sut.Head.Down)
                                            .Select(node => node.SizeOfGap())
@@ -267,6 +292,77 @@ namespace CyclicalSkipListTests
 
             Assert.True(results.All(gapSize => gapSize >= MinimumGapSize));
             Assert.True(results.All(gapSize => gapSize <= MaximumGapSize));
+
+            // Teardown
+        }
+
+        [Theory(Timeout = TIMEOUT)]
+        [AutoSkiplistData(2 * MaximumGapSize, 2 * MaximumGapSize)]
+        public void Remove_ingAKeyFromASize2GapWithNoGapToTheRightAndASize2GapToTheLeft_ShouldPreserveMinimumGapSize
+            (Skiplist<int> sut, List<int> keys)
+        {
+            //Fixture setup - reduce first & second gap to size 2:
+            var sizeOfFirstGap = sut.Head.Down.SizeOfGap();
+            var firstNodeInFirstGap = sut.Head.Bottom();
+            var lastNodeInFirstGap = firstNodeInFirstGap.RightBy(sizeOfFirstGap - 1);
+            firstNodeInFirstGap.ConnectTo(lastNodeInFirstGap);
+
+            var sizeOfLastGap = sut.Head.Down.Right.SizeOfGap();
+            var firstNodeInSecondGap = sut.Head.Down.Right.Down;
+            var lastNodeInSecondGap = firstNodeInSecondGap.RightBy(sizeOfLastGap - 1);
+            firstNodeInSecondGap.ConnectTo(lastNodeInSecondGap);
+
+            var keyToBeRemoved = keys.Max();
+
+            // Exercise system
+            sut.Remove(keyToBeRemoved);
+
+            // Verify outcome
+            var results = SkiplistUtilities.EnumerateNodesInLevel(sut.Head)
+                                           .Select(node => node.SizeOfGap())
+                                           .ToList();
+
+            Assert.True(results.All(gapSize => gapSize >= MinimumGapSize));
+            Assert.True(results.All(gapSize => gapSize <= MaximumGapSize));
+
+            // Teardown
+        }
+
+        [Theory]
+        [AutoSkiplistData(2, 2)]
+        public void Remove_ingANodeFromA2ElementSkiplist_ShouldReduceTheHeightOfTheSkiplist
+            (Skiplist<int> sut, List<int> keys)
+        {
+            // Fixture setup
+            var keyToBeRemoved = keys[new Random().Next(0, keys.Count - 1)];
+
+            // Exercise system
+            sut.Remove(keyToBeRemoved);
+
+            // Verify outcome
+            Assert.Null(sut.Head.Down);
+
+            // Teardown
+        }
+
+        [Theory]
+        [AutoSkiplistData(4*MaximumGapSize+1, 5*MaximumGapSize)]
+        public void Remove_ingAUniqueKey_ShouldRemoveItFromAllNodesInTheSkiplist
+            (Skiplist<int> sut, List<int> keys)
+        {
+            // Fixture setup
+            var keyToBeRemoved = keys.Max();
+
+            // Exercise system
+            sut.Remove(keyToBeRemoved);
+
+            Debug.WriteLine(sut);
+
+            // Verify outcome
+            var levels = SkiplistUtilities.EnumerateLevels(sut.Head);
+            var nodes = levels.SelectMany(SkiplistUtilities.EnumerateNodesInLevel);
+
+            Assert.True(nodes.All(node => node.Key != keyToBeRemoved));
 
             // Teardown
         }
