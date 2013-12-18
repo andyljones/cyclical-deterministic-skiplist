@@ -6,50 +6,48 @@ namespace CyclicalSkipList
 {
     public static class SkiplistStringFormatter
     {
-        public static string ConvertToString<T>(INode<T> start)
+        public static string ConvertToString<T>(Skiplist<T> skiplist)
         {
-            var levelFormatString = CreateFormatString(start);
-            var headsOfLevels = SkiplistUtilities.EnumerateLevels(start);
+            var format = CreateFormatFor(skiplist);
+            var levels = skiplist.EnumerateLevels();
 
-            string outputString = "";
-            foreach (var head in headsOfLevels)
-            {
-                outputString = outputString + ConvertLevelToString(head, levelFormatString);
-            }
+            var levelStrings = levels.Select(level => FormatLevel(level, format) + "\n");
 
-            return outputString.Replace(" ", "-");
+            return String.Concat(levelStrings).Replace(" ", "-");
         }
 
-        private static string CreateFormatString<T>(INode<T> head)
+        private static string CreateFormatFor<T>(Skiplist<T> skiplist)
         {
-            var headOfLowestLevel = head.Bottom();
-            var keys = SkiplistUtilities.EnumerateKeysInLevel(headOfLowestLevel).ToList();
+            var bottomNodes = skiplist.Head.Bottom().EnumerateRightwards().ToList();
 
-            var numberOfColumns = keys.Count();
-            var columnWidth = keys.Max(key => key.ToString().Length) + 1;
+            var numberOfColumns = bottomNodes.Count();
+            var columnWidth = bottomNodes.Max(node => node.Key.ToString().Length) + 1;
 
-            var formatStrings = Enumerable.Range(0, numberOfColumns).Select(i => "{" + i + ",-" + (columnWidth) + "}").ToArray();
-            var levelFormatString = string.Concat(formatStrings);
+            var nodeFormat = Enumerable.Range(0, numberOfColumns).Select(i => "{" + i + ", -" + (columnWidth) + "}").ToArray();
+            var levelFormat = string.Concat(nodeFormat);
 
-            return levelFormatString;
+            return levelFormat;
         }
 
-        private static string ConvertLevelToString<T>(INode<T> head, string formatString)
+        private static string FormatLevel<T>(INode<T> head, string format)
         {
-            var nodes = SkiplistUtilities.EnumerateNodesInLevel(head).ToList();
+            var nodes = head.EnumerateRightwards().ToList();
             var keys = nodes.ToDictionary(node => node, node => node.Key);
-            var spacings = nodes.ToDictionary(node => node, node => node.SizeOfBaseGapTo(node.Right) - 1);
+            var spacings = nodes.ToDictionary(node => node, node => node.Bottom().DistanceTo(node.Right.Bottom()) - 1);
 
-            var valuesForThisLevel = new List<string>();
+            var spacedKeys = new List<string>();
             foreach (var node in nodes)
             {
-                valuesForThisLevel.Add(keys[node].ToString());
-                valuesForThisLevel.AddRange(Enumerable.Repeat("", spacings[node]));
+                var key = keys[node].ToString();
+                spacedKeys.Add(key);
+
+                var spacing = Enumerable.Repeat(" ", spacings[node]);
+                spacedKeys.AddRange(spacing);
             }
 
-            var stringForThisLevel = String.Format(formatString, valuesForThisLevel.ToArray());
+            var stringForThisLevel = String.Format(format, spacedKeys.ToArray());
 
-            return stringForThisLevel + "\n";
+            return stringForThisLevel;
         }
     }
 }

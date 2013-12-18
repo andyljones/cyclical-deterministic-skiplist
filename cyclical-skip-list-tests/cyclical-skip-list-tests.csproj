@@ -60,15 +60,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Source\SkiplistInserterTests.cs" />
-    <Compile Include="Source\SkiplistSearcherTests.cs" />
-    <Compile Include="Source\SkiplistRemoverTests.cs" />
-    <Compile Include="Source\TestUtilities\AutoDataAttributes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Source\TestUtilities\FixtureCustomizations.cs" />
-    <Compile Include="Source\SkiplistFactoryTests.cs" />
-    <Compile Include="Source\FormatterTests.cs" />
-    <Compile Include="Source\SkiplistUtilitiesTests.cs" />
+    <Compile Include="Source\INodeUtilitiesTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -79,6 +72,9 @@
       <Project>{b4886d5d-7aea-4541-a6f4-5f601981d323}</Project>
       <Name>cyclical-skip-list</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Source\TestUtilities\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
