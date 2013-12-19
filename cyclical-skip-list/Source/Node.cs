@@ -9,11 +9,6 @@
         public INode<T> Up { get; set; }
         public INode<T> Down { get; set; }
 
-        public Node(T key)
-        {
-            Key = key;
-        }
-
         public override string ToString()
         {
             return "<|"+ Key +"|>";
