@@ -64,22 +64,27 @@ namespace CyclicalSkipList
 
         public static int DistanceRightTo<T>(this INode<T> origin, INode<T> destination)
         {
-            if (origin == destination)
+            var distance = 1;
+            var node = origin.Right;
+            while (node != null && node != origin && node != destination)
             {
-                return 1;
+                node = node.Right;
+                distance++;
             }
 
-            var path = origin.EnumerateRight().TakeWhile(node => node != destination).ToList();
-
-            if (path.LastOrDefault() != destination.Left)
+            if (node == null)
             {
-                throw new ArgumentException("End is not to the right of start!");
+                throw new InvalidDataException("List ended before destination was found!");
             }
-                        
-            return path.Count + 1;
+            if (origin != destination && node == origin)
+            {
+                throw new InvalidDataException("Returned to origin without finding destination!");
+            }
+        
+            return distance;
         }
 
-        public static int DistanceToEnd<T>(this INode<T> node)
+        public static int LengthOfList<T>(this INode<T> node)
         {
             return node.EnumerateRight().Count();
         }

@@ -8,12 +8,19 @@ namespace CyclicalSkipList
     {
         public static string StringOf<T>(Skiplist<T> skiplist)
         {
-            var format = CreateFormatFor(skiplist);
-            var levels = skiplist.Head.EnumerateDown();
+            var skiplistString = "";
 
-            var levelStrings = levels.Select(level => FormatLevel(level, format) + "\n");
+            if (skiplist.Head != null)
+            {
+                var format = CreateFormatFor(skiplist);
+                var levels = skiplist.Head.EnumerateDown();
 
-            return String.Concat(levelStrings).Replace(" ", "-");
+                var levelStrings = levels.Select(level => FormatLevel(level, format) + "\n").ToArray();
+
+                skiplistString = String.Concat(levelStrings).Replace(" ", "-");
+            }
+
+            return skiplistString;
         }
 
         private static string CreateFormatFor<T>(Skiplist<T> skiplist)
@@ -45,7 +52,7 @@ namespace CyclicalSkipList
                 spacedKeys.AddRange(spacing);
             }
 
-            var stringForThisLevel = String.Format(format, spacedKeys.ToArray());
+            var stringForThisLevel = String.Format(format, spacedKeys.ToArray()); 
 
             return stringForThisLevel;
         }

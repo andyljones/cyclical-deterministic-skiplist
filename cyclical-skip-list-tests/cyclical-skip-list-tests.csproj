@@ -63,8 +63,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\INodeUtilitiesTests.cs" />
     <Compile Include="Source\TestUtilities\AutoNSubstituteData.cs" />
+    <Compile Include="Source\TestUtilities\AutoRandomRepeatCountDataAttribute.cs" />
     <Compile Include="Source\TestUtilities\AutoSkiplistData.cs" />
-    <Compile Include="Source\TestUtilities\SkiplistBuilder.cs" />
     <Compile Include="Source\TestUtilities\SkiplistFactoryTests.cs" />
   </ItemGroup>
   <ItemGroup>

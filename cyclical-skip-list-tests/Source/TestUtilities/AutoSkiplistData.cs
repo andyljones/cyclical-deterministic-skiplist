@@ -10,13 +10,19 @@ namespace CyclicalSkipListTests.TestUtilities
 {
     public class AutoSkiplistDataAttribute : AutoDataAttribute
     {
-        public AutoSkiplistDataAttribute(int minimumLength, int maximumLength)
+        public AutoSkiplistDataAttribute(double minimumNumberOfGaps, double maximumNumberOfGaps)
         {
-            var numberOfKeys = new Random().Next(minimumLength, maximumLength);
-            var keys = Fixture.CreateMany<int>(numberOfKeys);
-            Fixture.Inject(keys.ToList());
+            var gapSize = SkiplistFactory.MaximumGapSize;
+            var minimumLength = (int)(gapSize*minimumNumberOfGaps);
+            var maximumLength = (int)(gapSize*maximumNumberOfGaps);
 
-            Fixture.Register(() => SkiplistFactory.CreateFrom(Fixture.Create<List<int>>()));
+            var numberOfKeys = new Random().Next(minimumLength, maximumLength);
+
+            var keys = new List<int>();
+            Fixture.AddManyTo(keys, numberOfKeys);
+            
+            Fixture.Inject(keys);
+            Fixture.Register(() => SkiplistFactory.CreateFrom(keys));
         }
     }
 }
