@@ -10,7 +10,11 @@ namespace CyclicalSkipList
         {
             var skiplistString = "";
 
-            if (skiplist.Head != null)
+            if (skiplist.Head == null)
+            {
+                skiplistString = "Empty";
+            }
+            else
             {
                 var format = CreateFormatFor(skiplist);
                 var levels = skiplist.Head.EnumerateDown();
