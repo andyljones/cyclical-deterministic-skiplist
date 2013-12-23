@@ -2,8 +2,6 @@
 using System.Diagnostics;
 using System.Linq;
 using CyclicalSkipList;
-using Ploeh.AutoFixture;
-using Ploeh.AutoFixture.Xunit;
 using Xunit;
 using Xunit.Extensions;
 
@@ -12,7 +10,7 @@ namespace CyclicalSkipListTests.TestUtilities
     public class SkiplistFactoryTests
     {
         [Theory]
-        [AutoSkiplistData(0, 0)]
+        [AutoSkiplistData(0)]
         public void CreateFrom_WhenGivenNoKeys_ShouldReturnASkiplistWithoutAHead
             (Skiplist<int> sut)
         {
@@ -27,7 +25,7 @@ namespace CyclicalSkipListTests.TestUtilities
         }
 
         [Theory]
-        [AutoSkiplistData(0.75, 1)]
+        [AutoSkiplistData(1)]
         public void CreateFrom_WhenGivenFewerKeysThanTheMaxGapSize_ShouldReturnADoublyLinkedList
             (Skiplist<int> sut)
         {
@@ -44,7 +42,7 @@ namespace CyclicalSkipListTests.TestUtilities
         }
 
         [Theory]
-        [AutoSkiplistData(0.75, 1)]
+        [AutoSkiplistData(1)]
         public void CreateFrom_WhenGivenFewerKeysThanTheMaxGapSize_ShouldReturnAListOfNodesContainingAllTheKeysInOrder
             (Skiplist<int> sut, List<int> keys)
         {
@@ -62,7 +60,7 @@ namespace CyclicalSkipListTests.TestUtilities
         }
 
         [Theory]
-        [AutoSkiplistData(2, 3)]
+        [AutoSkiplistData(3)]
         public void CreateFrom_WhenGivenMoreKeysThanTheMaxGapsize_ShouldReturnASkiplistWithATopLevelWithFewerNodesThanTheMaxGapsize
             (Skiplist<int> sut)
         {
@@ -80,7 +78,7 @@ namespace CyclicalSkipListTests.TestUtilities
         }
 
         [Theory]
-        [AutoSkiplistData(10, 15)]
+        [AutoSkiplistData(3)]
         public void CreateFrom_WhenGivenMoreKeysThanTheMaxGapsize_ShouldReturnASkiplistWithEveryUpperLevelWithFewerNodesInTheGapThanTheMaxGapsize
             (Skiplist<int> sut)
         {

@@ -10,7 +10,7 @@ namespace CyclicalSkipListTests
 
 
         [Theory]
-        [AutoSkiplistData(5, 10)]
+        [AutoSkiplistData(3)]
         public void Test( )
         {
             // Fixture setup
