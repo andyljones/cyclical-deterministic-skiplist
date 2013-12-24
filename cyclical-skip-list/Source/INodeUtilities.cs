@@ -66,19 +66,15 @@ namespace CyclicalSkipList
         {
             var distance = 1;
             var node = origin.Right;
-            while (node != null && node != origin && node != destination)
+            while (node != origin && node != destination)
             {
                 node = node.Right;
                 distance++;
             }
 
-            if (node == null)
-            {
-                throw new InvalidDataException("List ended before destination was found!");
-            }
             if (origin != destination && node == origin)
             {
-                throw new InvalidDataException("Returned to origin without finding destination!");
+                throw new InvalidDataException(String.Format("Returned to origin {0} without finding destination {1}!", origin, destination));
             }
         
             return distance;

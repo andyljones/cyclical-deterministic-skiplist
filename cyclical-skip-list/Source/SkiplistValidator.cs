@@ -63,5 +63,13 @@ namespace CyclicalSkipList
             return !failingNodes.Any();
         }
 
+        public static bool ValidateHeights<T>(Skiplist<T> skiplist, out IEnumerable<INode<T>> failingNodes)
+        {
+            var upperNodes = ReachableNodes(skiplist).Where(node => node.Down != null);
+
+            failingNodes = upperNodes.Where(node => node.Height() != node.Right.Height() || node.Left.Height() != node.Height());
+
+            return !failingNodes.Any();
+        }
     }
 }

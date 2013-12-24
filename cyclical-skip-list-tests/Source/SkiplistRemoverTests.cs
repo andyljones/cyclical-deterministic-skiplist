@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using CyclicalSkipList;
 using CyclicalSkipListTests.TestUtilities;
@@ -40,7 +41,7 @@ namespace CyclicalSkipListTests
             (Skiplist<int> sut, List<int> keys)
         {
             // Fixture setup
-            var keysToBeRemoved = keys.OrderBy(x => x).Take(sut.MaximumGapSize).ToList();
+            var keysToBeRemoved = keys.OrderBy(x => x).Take(2*sut.MaximumGapSize).ToList();
 
             // Exercise system
             foreach (var key in keysToBeRemoved)
@@ -58,6 +59,31 @@ namespace CyclicalSkipListTests
                     String.Join(", ", keysToBeRemoved),
                     sut,
                     String.Join(", ", failingNodes));
+            Assert.True(result, failureString);
+
+            // Teardown
+        }
+
+        [Theory]
+        [AutoSkiplistData(height: 3)]
+        public void Remove_ingAllKeys_ShouldLeaveASkiplistWithAnEmptyHead
+            (Skiplist<int> sut, List<int> keys)
+        {
+            // Fixture setup
+
+            // Exercise system
+            foreach (var key in keys)
+            {
+                sut.Remove(key);
+            }
+
+            // Verify outcome
+            var result = sut.Head == null;
+
+            var failureString =
+                String.Format(
+                    "All keys were to be removed from skiplist \n\n{0}\n, but a head remains",
+                    sut);
             Assert.True(result, failureString);
 
             // Teardown

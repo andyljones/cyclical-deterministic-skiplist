@@ -11,14 +11,16 @@ namespace CyclicalSkipList
                 RemoveHead(skiplist);
             }
 
-            var result = skiplist.Find(key, node => RemoverAction(key, skiplist, node));
+            var keyWasFound = skiplist.Find(key, node => RemoverAction(key, skiplist, node));
 
             //TODO: Test
-            if (skiplist.Head.Down != null && skiplist.Head.Right == skiplist.Head)
+            if (skiplist.Head != null && skiplist.Head.Down != null && skiplist.Head.Right == skiplist.Head)
             {
                 skiplist.Head = skiplist.Head.Down;
                 skiplist.Head.Up = null;
             }
+
+            return keyWasFound;
         }
 
         //TODO: Test
@@ -43,7 +45,7 @@ namespace CyclicalSkipList
             {
                 RemoveAtBottom(node);
             }
-            else if (node.SizeOfGap() <= skiplist.MinimumGapSize)
+            else if (node.Down != null && node.SizeOfGap() <= skiplist.MinimumGapSize)
             {
                 ExpandGap(node, skiplist);
             }
@@ -53,8 +55,8 @@ namespace CyclicalSkipList
         {
             if (node.Up != null)
             {
-                node.Up.ConnectDownTo(node.Left);
-                SetKeysInColumn(node.Left);
+                node.Up.ConnectDownTo(node.Right);
+                SetKeysInColumn(node.Right);
             }
 
             node.Left.ConnectTo(node.Right);
@@ -94,12 +96,9 @@ namespace CyclicalSkipList
                 nextNode.Up.ConnectDownTo(nextNode.Right);
                 nextNode.Up = null;
             }
-            if (nextNode.Down != null)
-            {
-                nextNode.Right.ConnectDownTo(nextNode.Down);
-                nextNode.Down = null;
-            }
 
+            nextNode.Down.Up = null;
+            nextNode.Down = null;
             node.ConnectTo(nextNode.Right);
 
             SetKeysInColumn(nextNode);
@@ -113,11 +112,6 @@ namespace CyclicalSkipList
             {
                 gapEnd.Up.ConnectDownTo(gapEnd.Right);
                 gapEnd.Up = null;
-            }
-            if (gapEnd.Down != null)
-            {
-                gapEnd.Right.ConnectDownTo(gapEnd.Down);
-                gapEnd.Down = null;
             }
 
             SetKeysInColumn(gapEnd.Right);
