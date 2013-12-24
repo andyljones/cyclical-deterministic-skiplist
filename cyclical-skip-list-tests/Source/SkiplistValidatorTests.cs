@@ -26,7 +26,7 @@ namespace CyclicalSkipListTests
             var expectedResult = numberOfNodesOnBottom + numberOfNodesInMidlevel + numberOfNodesAtTop;
 
             // Exercise system
-            var anonymousNodes = sut.ReachableNodes();
+            var anonymousNodes = SkiplistValidator.ReachableNodes(sut);
 
             // Verify outcome
             var result = anonymousNodes.Count();
@@ -51,7 +51,7 @@ namespace CyclicalSkipListTests
 
             // Exercise system
             IEnumerable<INode<int>> anonymousOutput;
-            var result = sut.ValidateRightwardsReachability(out anonymousOutput);
+            var result = SkiplistValidator.ValidateRightwardsReachability(sut, out anonymousOutput);
 
             // Verify outcome
             var failureString = String.Format(
@@ -75,7 +75,7 @@ namespace CyclicalSkipListTests
 
             // Exercise system
             IEnumerable<INode<int>> output;
-            var result = sut.ValidateRightwardsReachability(out output);
+            var result = SkiplistValidator.ValidateRightwardsReachability(sut, out output);
 
             output = output.ToList();
 
@@ -106,11 +106,11 @@ namespace CyclicalSkipListTests
 
             // Exercise system
             IEnumerable<INode<int>> anonymousOutput;
-            var result = sut.ValidateOrdering(out anonymousOutput);
+            var result = SkiplistValidator.ValidateOrdering(sut, out anonymousOutput);
 
             // Verify outcome
             var failureString = String.Format(
-                "The nodes reported as out-of-order are \n {0} \n in skiplist {1}",
+                "The nodes reported as out-of-order are \n\n {0} \n\n in skiplist \n\n{1}",
                 String.Join(", ", anonymousOutput.Select(node => node.ToString())),
                 sut);
             Assert.True(result, failureString);
@@ -130,7 +130,7 @@ namespace CyclicalSkipListTests
 
             // Exercise system
             IEnumerable<INode<int>> output;
-            var result = sut.ValidateOrdering(out output);
+            var result = SkiplistValidator.ValidateOrdering(sut, out output);
 
             output = output.ToList();
 
@@ -165,7 +165,7 @@ namespace CyclicalSkipListTests
 
             // Exercise system
             IEnumerable<INode<int>> anonymousOutput;
-            var result = sut.ValidateGapSize(out anonymousOutput);
+            var result = SkiplistValidator.ValidateGapSize(sut, out anonymousOutput);
 
             // Verify outcome
             var failureString = String.Format(
@@ -187,7 +187,7 @@ namespace CyclicalSkipListTests
 
             // Exercise system
             IEnumerable<INode<int>> output;
-            var result = sut.ValidateGapSize(out output);
+            var result = SkiplistValidator.ValidateGapSize(sut, out output);
 
             output = output.ToList();
 
@@ -219,7 +219,7 @@ namespace CyclicalSkipListTests
 
             // Exercise system
             IEnumerable<INode<int>> output;
-            var result = sut.ValidateGapSize(out output);
+            var result = SkiplistValidator.ValidateGapSize(sut, out output);
 
             output = output.ToList();
 

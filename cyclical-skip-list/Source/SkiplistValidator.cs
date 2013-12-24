@@ -7,7 +7,7 @@ namespace CyclicalSkipList
 {
     public static class SkiplistValidator
     {
-        public static IEnumerable<INode<T>> ReachableNodes<T>(this Skiplist<T> skiplist)
+        public static IEnumerable<INode<T>> ReachableNodes<T>(Skiplist<T> skiplist)
         {
             var discoveredNodes = new HashSet<INode<T>>();
             var processedNodes = new HashSet<INode<T>>();
@@ -32,9 +32,9 @@ namespace CyclicalSkipList
             return processedNodes;
         }
 
-        public static bool ValidateRightwardsReachability<T>(this Skiplist<T> skiplist, out IEnumerable<INode<T>> failingNodes)
+        public static bool ValidateRightwardsReachability<T>(Skiplist<T> skiplist, out IEnumerable<INode<T>> failingNodes)
         {
-            var allReachableNodes = skiplist.ReachableNodes();
+            var allReachableNodes = ReachableNodes(skiplist);
 
             var headsOfLevels = skiplist.Head.EnumerateDown();
             var nodesReachableGoingRightwards = headsOfLevels.SelectMany(headOfLevel => headOfLevel.EnumerateRight());
@@ -44,27 +44,18 @@ namespace CyclicalSkipList
             return !failingNodes.Any();
         }
 
-        public static bool ValidateOrdering<T>(this Skiplist<T> skiplist, out IEnumerable<INode<T>> failingNodes)
+        public static bool ValidateOrdering<T>(Skiplist<T> skiplist, out IEnumerable<INode<T>> failingNodes)
         {
-            var headsOfLevels = skiplist.Head.EnumerateDown();
+            var nodes = ReachableNodes(skiplist);
 
-            failingNodes = headsOfLevels.SelectMany(headOfLevel => OutOfOrderNodesInLevel(headOfLevel, skiplist.Compare));
+            failingNodes = nodes.Where(node => !skiplist.Compare(node.Left.Key, node.Key, node.Right.Key));
 
             return !failingNodes.Any();
         }
 
-        private static IEnumerable<INode<T>> OutOfOrderNodesInLevel<T>(INode<T> headOfLevel, Func<T, T, T, bool> compare)
+        public static bool ValidateGapSize<T>(Skiplist<T> skiplist, out IEnumerable<INode<T>> failingNodes)
         {
-            var nodesInLevel = headOfLevel.EnumerateRight();
-
-            var nodesOutOfOrder = nodesInLevel.Where(node => !compare(node.Left.Key, node.Key, node.Right.Key));
-
-            return nodesOutOfOrder;
-        }
-
-        public static bool ValidateGapSize<T>(this Skiplist<T> skiplist, out IEnumerable<INode<T>> failingNodes)
-        {
-            var upperNodes = skiplist.ReachableNodes().Where(node => node.Down != null);
+            var upperNodes = ReachableNodes(skiplist).Where(node => node.Down != null);
 
             failingNodes = upperNodes.Where( node => node.SizeOfGap() < skiplist.MinimumGapSize || 
                                                      node.SizeOfGap() > skiplist.MaximumGapSize);

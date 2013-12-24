@@ -27,7 +27,7 @@ namespace CyclicalSkipList
 
         private static Func<T, T, T, bool> CreateCyclicComparer(Func<T, T, int> linearCompare)
         {
-            return new LinearToCyclicCompareAdapter<T>(linearCompare).CyclicCompare;
+            return new LinearCompareToCyclicContainsAdapter<T>(linearCompare).CyclicContains;
         }
 
         public override string ToString()

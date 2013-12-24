@@ -11,7 +11,7 @@
 
         public override string ToString()
         {
-            return "<|"+ Key +"|>";
+            return "<|"+ Key + "|" + this.Height() + "|>";
         }
     }
 }

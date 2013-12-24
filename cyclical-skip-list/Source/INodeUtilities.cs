@@ -102,5 +102,17 @@ namespace CyclicalSkipList
             
             return node.Down.DistanceRightTo(node.Right.Down);
         }
+
+        public static int Height<T>(this INode<T> node)
+        {
+            if (node.Down == null)
+            {
+                return 0;
+            }
+            else
+            {
+                return node.Down.Height() + 1;
+            }
+        }
     }
 }
