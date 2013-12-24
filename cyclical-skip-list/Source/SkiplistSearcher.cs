@@ -18,6 +18,11 @@ namespace CyclicalSkipList
             {
                 node = FindCorrectGapInLevel(key, node, skiplist.Compare);
 
+                if (pathAction != null)
+                {
+                    pathAction(node);
+                }
+
                 if (node.Down != null)
                 {
                     node = node.Down;

@@ -35,6 +35,9 @@ namespace CyclicalSkipList
             return SkiplistStringFormatter.StringOf(this);
         }
 
-
+        public INode<T> CreateNode(T key)
+        {
+            return new Node<T> {Key = key};
+        }
     }
 }
