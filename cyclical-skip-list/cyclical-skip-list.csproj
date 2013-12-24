@@ -48,6 +48,7 @@
     <Compile Include="Source\Skiplist.cs" />
     <Compile Include="Source\SkiplistFactory.cs" />
     <Compile Include="Source\SkiplistInserter.cs" />
+    <Compile Include="Source\SkiplistRemover.cs" />
     <Compile Include="Source\SkiplistSearcher.cs" />
     <Compile Include="Source\SkiplistStringFormatter.cs" />
     <Compile Include="Source\SkiplistUtilities.cs" />

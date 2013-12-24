@@ -24,7 +24,6 @@ namespace CyclicalSkipList
             MaximumGapSize = 2*minimumGapSize;
         }
 
-
         private static Func<T, T, T, bool> CreateCyclicComparer(Func<T, T, int> linearCompare)
         {
             return new LinearCompareToCyclicContainsAdapter<T>(linearCompare).CyclicContains;

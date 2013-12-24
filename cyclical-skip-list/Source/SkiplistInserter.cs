@@ -6,16 +6,25 @@ namespace CyclicalSkipList
     {
         public static void Insert<T>(this Skiplist<T> skiplist, T key)
         {
-            skiplist.Find(key, node => InserterAction(key, node, skiplist));
+            if (skiplist.Head == null)
+            {
+                //TODO: Test.
+                skiplist.Head = skiplist.CreateNode(key);
+                skiplist.Head.ConnectTo(skiplist.Head);
+            }
+            else
+            {
+                skiplist.Find(key, node => InserterAction(key, skiplist, node));                       
+            }
         }
 
-        private static void InserterAction<T>(T key, INode<T> pathNode, Skiplist<T> skiplist)
+        private static void InserterAction<T>(T key, Skiplist<T> skiplist, INode<T> pathNode)
         {
             if (pathNode.Down == null)
             {
                 InsertKeyAfterNode(key, pathNode, skiplist.CreateNode);
             }
-            else if (pathNode.SizeOfGap() > skiplist.MaximumGapSize)
+            else if (pathNode.SizeOfGap() >= skiplist.MaximumGapSize)
             {
                 SplitGap(pathNode, skiplist.CreateNode);
             }
