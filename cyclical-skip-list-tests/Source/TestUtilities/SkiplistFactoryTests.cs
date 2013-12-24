@@ -10,7 +10,7 @@ namespace CyclicalSkipListTests.TestUtilities
     public class SkiplistFactoryTests
     {
         [Theory]
-        [AutoSkiplistData(0)]
+        [AutoSkiplistData(height: 0)]
         public void CreateFrom_WhenGivenNoKeys_ShouldReturnASkiplistWithoutAHead
             (Skiplist<int> sut)
         {
@@ -25,7 +25,7 @@ namespace CyclicalSkipListTests.TestUtilities
         }
 
         [Theory]
-        [AutoSkiplistData(1)]
+        [AutoSkiplistData(height: 1)]
         public void CreateFrom_WhenGivenFewerKeysThanTheMaxGapSize_ShouldReturnADoublyLinkedList
             (Skiplist<int> sut)
         {
@@ -42,7 +42,7 @@ namespace CyclicalSkipListTests.TestUtilities
         }
 
         [Theory]
-        [AutoSkiplistData(1)]
+        [AutoSkiplistData(height: 1)]
         public void CreateFrom_WhenGivenFewerKeysThanTheMaxGapSize_ShouldReturnAListOfNodesContainingAllTheKeysInOrder
             (Skiplist<int> sut, List<int> keys)
         {
@@ -60,7 +60,7 @@ namespace CyclicalSkipListTests.TestUtilities
         }
 
         [Theory]
-        [AutoSkiplistData(3)]
+        [AutoSkiplistData(height: 3)]
         public void CreateFrom_WhenGivenMoreKeysThanTheMaxGapsize_ShouldReturnASkiplistWithATopLevelWithFewerNodesThanTheMaxGapsize
             (Skiplist<int> sut)
         {
@@ -78,7 +78,7 @@ namespace CyclicalSkipListTests.TestUtilities
         }
 
         [Theory]
-        [AutoSkiplistData(3)]
+        [AutoSkiplistData(height: 3)]
         public void CreateFrom_WhenGivenMoreKeysThanTheMaxGapsize_ShouldReturnASkiplistWithEveryUpperLevelWithFewerNodesInTheGapThanTheMaxGapsize
             (Skiplist<int> sut)
         {

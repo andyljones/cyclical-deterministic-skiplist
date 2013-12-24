@@ -13,7 +13,7 @@ namespace CyclicalSkipList
         public static Skiplist<T> CreateFrom<T>(IEnumerable<T> keys)
         {
             var keyList = keys.ToList();
-            var skiplist = new Skiplist<T>();
+            var skiplist = new Skiplist<T>(MinimumGapSize);
 
             if (keyList.Any())
             {
