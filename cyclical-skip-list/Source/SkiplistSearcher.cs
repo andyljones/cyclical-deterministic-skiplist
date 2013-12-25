@@ -4,14 +4,14 @@ namespace CyclicalSkipList
 {
     public static class SkiplistSearcher
     {
-        public static bool Find<T>(this Skiplist<T> skiplist, T key, Action<INode<T>> pathAction = null)
+        public static bool Find<T>(this Skiplist<T> skiplist, T key, INode<T> start = null, Action<INode<T>> pathAction = null)
         {
             if (skiplist.Head == null)
             {
                 return false;
             }
 
-            var node = skiplist.Head;
+            var node = start ?? skiplist.Head;
 
             var atCorrectNode = false;
             while (!atCorrectNode)

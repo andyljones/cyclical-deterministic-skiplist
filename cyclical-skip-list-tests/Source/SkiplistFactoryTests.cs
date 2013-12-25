@@ -34,7 +34,7 @@ namespace CyclicalSkipListTests.TestUtilities
             // Exercise system
 
             // Verify outcome
-            var nodes = sut.Head.EnumerateRight().ToList();
+            var nodes = sut.Head.Down.EnumerateRight().ToList();
             Assert.False(nodes.Any(node => node.Right.Left != node), "There are nodes for which a right-left move does not return the origin!");
             Assert.False(nodes.Any(node => node.Left.Right != node), "There are nodes for which a left-right move does not return the origin!");
 
@@ -52,7 +52,7 @@ namespace CyclicalSkipListTests.TestUtilities
             // Exercise system
 
             // Verify outcome
-            var result = sut.Head.EnumerateRight().Select(node => node.Key);
+            var result = sut.Head.Down.EnumerateRight().Select(node => node.Key);
 
             Assert.Equal(expectedResult, result);
 
@@ -70,7 +70,7 @@ namespace CyclicalSkipListTests.TestUtilities
             // Exercise system
 
             // Verify outcome
-            var result = sut.Head.LengthOfList();
+            var result = sut.Head.Down.LengthOfList();
 
             Assert.True(expectedResult >= result, "There are more nodes in the top level than the maximum gap size!");
 

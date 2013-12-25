@@ -53,7 +53,7 @@ namespace CyclicalSkipListTests
             var expectedResults = keys.OrderBy(key => key);
 
             // Exercise system
-            var nodesInList = list.Head.EnumerateRight();
+            var nodesInList = list.Head.Down.EnumerateRight();
 
             // Verify outcome
             var results = nodesInList.Select(node => node.Key);
@@ -72,7 +72,7 @@ namespace CyclicalSkipListTests
             var expectedResult = keys.Count - 1;
 
             // Exercise system
-            var result = list.Head.DistanceRightTo(list.Head.Left);
+            var result = list.Head.Down.DistanceRightTo(list.Head.Down.Left);
 
             // Verify outcome
             Assert.Equal(expectedResult, result);

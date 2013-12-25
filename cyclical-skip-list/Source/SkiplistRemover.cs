@@ -11,27 +11,31 @@ namespace CyclicalSkipList
                 return false;
             }
 
-            if (skiplist.Head.Down == null && Equals(skiplist.Head.Key, key))
+            if (skiplist.Head.Down == null)
             {
-                RemoveCurrentHead(skiplist);
-                return true;
+                return TryRemoveCurrentHead(skiplist, key);
             }
 
-            var keyFound = skiplist.Find(key, node => HandlePathToDeletionPoint(node, key, skiplist.MinimumGapSize));
-
+            var keyFound = skiplist.Find(key, pathAction: node => HandlePathToDeletionPoint(node, key, skiplist.MinimumGapSize), start: skiplist.Head.Down);
             return keyFound;
         }
 
-        private static void RemoveCurrentHead<T>(Skiplist<T> skiplist)
+        private static bool TryRemoveCurrentHead<T>(Skiplist<T> skiplist, T key)
         {
-            if (skiplist.Head.Right == skiplist.Head)
+            if (skiplist.Head.Right == skiplist.Head && Equals(skiplist.Head.Key, key))
             {
                 skiplist.Head = null;
+                return true;
             }
-            else
+            else if (skiplist.Head.Right != skiplist.Head && Equals(skiplist.Head.Key, key))
             {
                 skiplist.Head.Left.ConnectTo(skiplist.Head.Right);
                 skiplist.Head = skiplist.Head.Right;
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 

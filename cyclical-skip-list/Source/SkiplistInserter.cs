@@ -25,7 +25,7 @@ namespace CyclicalSkipList
                 skiplist.Head = newHead;
             }
 
-            skiplist.Find(key, node => InserterAction(key, skiplist, node));
+            skiplist.Find(key, pathAction: node => InserterAction(key, skiplist, node));
         }
 
         private static void InserterAction<T>(T key, Skiplist<T> skiplist, INode<T> pathNode)

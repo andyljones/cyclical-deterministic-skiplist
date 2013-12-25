@@ -52,7 +52,6 @@
     <Compile Include="Source\SkiplistSearcher.cs" />
     <Compile Include="Source\SkiplistStringFormatter.cs" />
     <Compile Include="Source\SkiplistUtilities.cs" />
-    <Compile Include="Source\SkiplistValidator.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

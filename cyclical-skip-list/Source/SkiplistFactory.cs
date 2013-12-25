@@ -19,7 +19,7 @@ namespace CyclicalSkipList
             {
                 var head = CreateOrderedCircularList(keyList, skiplist.CreateNode);
 
-                while (head.LengthOfList() > MaximumGapSize)
+                while (head.LengthOfList() > 1)
                 {
                     head = CreateNextLevel(head, skiplist.CreateNode);
                 }

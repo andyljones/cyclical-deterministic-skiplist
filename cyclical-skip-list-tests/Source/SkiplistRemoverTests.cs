@@ -80,7 +80,7 @@ namespace CyclicalSkipListTests
             sut.Remove(key);
 
             // Verify outcome
-            var result = SkiplistValidator.ReachableNodes(sut).Count();
+            var result = sut.Head.Down.EnumerateRight().Count();
 
             var failureString =
                 String.Format(
@@ -101,14 +101,14 @@ namespace CyclicalSkipListTests
             // Fixture setup
             var expectedResult = keys.Count - 1;
 
-            keys.Remove(sut.Head.Key);
+            keys.Remove(sut.Head.Down.Key);
             var key = keys.First();
 
             // Exercise system
             sut.Remove(key);
 
             // Verify outcome
-            var result = SkiplistValidator.ReachableNodes(sut).Count();
+            var result = sut.Head.Down.EnumerateRight().Count();
 
             var failureString =
                 String.Format(
@@ -127,14 +127,14 @@ namespace CyclicalSkipListTests
             (Skiplist<int> sut, List<int> keys)
         {
             // Fixture setup
-            keys.Remove(sut.Head.Key);
+            keys.Remove(sut.Head.Down.Key);
             var key = keys.First();
 
             // Exercise system
             sut.Remove(key);
 
             // Verify outcome
-            var result = sut.Head.Bottom().EnumerateRight().Any(node => node.Key == key);
+            var result = sut.Head.Down.EnumerateRight().Any(node => node.Key == key);
 
             var failureString =
                 String.Format(
@@ -153,7 +153,7 @@ namespace CyclicalSkipListTests
             (Skiplist<int> sut, List<int> keys)
         {
             // Fixture setup
-            var expectedResult = sut.Head.Down.Right;
+            var expectedResult = sut.Head.Bottom().Right;
             
             var key = keys.Min();
 
@@ -181,7 +181,7 @@ namespace CyclicalSkipListTests
             (Skiplist<int> sut, List<int> keys)
         {
             // Fixture setup
-            var expectedKey = sut.Head.Down.Right.Key;
+            var expectedKey = sut.Head.Bottom().Right.Key;
 
             var key = keys.Min();
 
@@ -213,7 +213,7 @@ namespace CyclicalSkipListTests
 
             var key = keys.Min();
 
-            sut.Head.Down.ConnectTo(sut.Head.Right.Down.Left);
+            sut.Head.Down.Down.ConnectTo(sut.Head.Down.Right.Down.Left);
 
             // Exercise system
             sut.Remove(key);
@@ -242,14 +242,14 @@ namespace CyclicalSkipListTests
 
             var key = keys.Min();
 
-            sut.Head.Down.ConnectTo(sut.Head.Right.Down.Left);
-            sut.Head.Right.Down.ConnectTo(sut.Head.Right.Right.Down.Left);
+            sut.Head.Down.Down.ConnectTo(sut.Head.Down.Right.Down.Left);
+            sut.Head.Down.Right.Down.ConnectTo(sut.Head.Down.Right.Right.Down.Left);
 
             // Exercise system
             sut.Remove(key);
 
             // Verify outcome
-            var result = sut.Head.SizeOfGap();
+            var result = sut.Head.Down.SizeOfGap();
 
             var failureString =
                 String.Format(
@@ -263,7 +263,7 @@ namespace CyclicalSkipListTests
         }
 
         [Theory]
-        [FixedLengthSkiplistData(length: 4 * MaximumGapSize + 1)]
+        [FixedLengthSkiplistData(length: 2 * MaximumGapSize)]
         public void Remove_ingAKeyFromMinimallySizedGapWithNoGapToTheRight_ShouldCauseTheGapToMergeWithTheOneToTheLeft
             (Skiplist<int> sut, List<int> keys)
         {
@@ -304,7 +304,7 @@ namespace CyclicalSkipListTests
 
             var key = keys.Min();
 
-            foreach (var node in sut.Head.EnumerateRight())
+            foreach (var node in sut.Head.Down.EnumerateRight())
             {
                 node.Down.ConnectTo(node.Right.Down.Left);
             }
