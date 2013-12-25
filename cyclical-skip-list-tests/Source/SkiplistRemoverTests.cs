@@ -80,7 +80,7 @@ namespace CyclicalSkipListTests
             sut.Remove(key);
 
             // Verify outcome
-            var result = sut.Head.Down.EnumerateRight().Count();
+            var result = sut.Head.Bottom().EnumerateRight().Count();
 
             var failureString =
                 String.Format(

@@ -17,11 +17,11 @@ namespace CyclicalSkipList
 
             if (keyList.Any())
             {
-                var head = CreateOrderedCircularList(keyList, skiplist.CreateNode);
+                var head = CreateOrderedCircularList(keyList, skiplist.NodeFactory);
 
                 while (head.LengthOfList() > 1)
                 {
-                    head = CreateNextLevel(head, skiplist.CreateNode);
+                    head = CreateNextLevel(head, skiplist.NodeFactory);
                 }
 
                 skiplist.Head = head;

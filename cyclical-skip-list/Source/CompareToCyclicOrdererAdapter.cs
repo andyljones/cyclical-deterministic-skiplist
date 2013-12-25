@@ -4,16 +4,16 @@ using System.Collections.Generic;
 
 namespace CyclicalSkipList
 {
-    public class LinearCompareToCyclicContainsAdapter<T> : ICyclicContains<T>
+    public class CompareToCyclicOrdererAdapter<T>
     {
         private readonly Func<T, T, int> _linearCompare; 
 
-        public LinearCompareToCyclicContainsAdapter(Func<T, T, int> linearCompare)
+        public CompareToCyclicOrdererAdapter(Func<T, T, int> linearCompare)
         {
             _linearCompare = linearCompare;
         }
 
-        public bool CyclicContains(T a, T b, T c)
+        public bool InOrder(T a, T b, T c)
         {
             if (_linearCompare(a, b) == 0 || _linearCompare(a, c) == 0)
             {

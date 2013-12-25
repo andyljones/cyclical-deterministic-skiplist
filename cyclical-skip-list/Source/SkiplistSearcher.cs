@@ -16,7 +16,7 @@ namespace CyclicalSkipList
             var atCorrectNode = false;
             while (!atCorrectNode)
             {
-                node = FindCorrectGapInLevel(key, node, skiplist.Compare);
+                node = FindCorrectGapInLevel(key, node, skiplist.InOrder);
 
                 if (pathAction != null)
                 {

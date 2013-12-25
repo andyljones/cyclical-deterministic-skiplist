@@ -8,34 +8,32 @@ namespace CyclicalSkipList
         {
             if (skiplist.Head == null)
             {
-                //TODO: Test.
-                skiplist.Head = skiplist.CreateNode(key);
+                skiplist.Head = skiplist.NodeFactory(key);
                 skiplist.Head.ConnectTo(skiplist.Head);
                 return;
             }
 
+            skiplist.Find(key, pathAction: node => InserterAction(key, skiplist, node));
+
             if (skiplist.Head.DistanceRightTo(skiplist.Head) > 1)
             {
-                //TODO: Test
-                var newHead = skiplist.CreateNode(skiplist.Head.Key);
+                var newHead = skiplist.NodeFactory(skiplist.Head.Key);
                 newHead.ConnectTo(newHead);
                 newHead.ConnectDownTo(skiplist.Head);
 
                 skiplist.Head = newHead;
             }
-
-            skiplist.Find(key, pathAction: node => InserterAction(key, skiplist, node));
         }
 
         private static void InserterAction<T>(T key, Skiplist<T> skiplist, INode<T> pathNode)
         {
             if (pathNode.Down == null)
             {
-                InsertKeyAfterNode(key, pathNode, skiplist.CreateNode);
+                InsertKeyAfterNode(key, pathNode, skiplist.NodeFactory);
             }
             else if (pathNode.SizeOfGap() >= skiplist.MaximumGapSize)
             {
-                SplitGap(pathNode, skiplist.CreateNode);
+                SplitGap(pathNode, skiplist.NodeFactory);
             }
         }
 

@@ -8,7 +8,7 @@ using Xunit.Extensions;
 
 namespace CyclicalSkipListTests
 {
-    public class LinearCompareToCyclicContainsAdapterTests
+    public class CompareToCyclicOrdererAdapterTests
     {
         [Theory]
         [AutoData]
@@ -16,12 +16,12 @@ namespace CyclicalSkipListTests
             (List<int> elements)
         {
             // Fixture setup
-            var sut = new LinearCompareToCyclicContainsAdapter<int>(Comparer<int>.Default.Compare);
+            var sut = new CompareToCyclicOrdererAdapter<int>(Comparer<int>.Default.Compare);
 
             elements = elements.OrderBy(i => i).ToList();
 
             // Exercise system
-            var result = sut.CyclicContains(elements[0], elements[1], elements[2]);
+            var result = sut.InOrder(elements[0], elements[1], elements[2]);
 
             // Verify outcome
             var failureString = String.Format(
@@ -39,12 +39,12 @@ namespace CyclicalSkipListTests
             (List<int> elements)
         {
             // Fixture setup
-            var sut = new LinearCompareToCyclicContainsAdapter<int>(Comparer<int>.Default.Compare);
+            var sut = new CompareToCyclicOrdererAdapter<int>(Comparer<int>.Default.Compare);
 
             elements = elements.OrderBy(i => i).ToList();
 
             // Exercise system
-            var result = sut.CyclicContains(elements[1], elements[2], elements[0]);
+            var result = sut.InOrder(elements[1], elements[2], elements[0]);
 
             // Verify outcome
             var failureString = String.Format(
@@ -62,12 +62,12 @@ namespace CyclicalSkipListTests
             (List<int> elements)
         {
             // Fixture setup
-            var sut = new LinearCompareToCyclicContainsAdapter<int>(Comparer<int>.Default.Compare);
+            var sut = new CompareToCyclicOrdererAdapter<int>(Comparer<int>.Default.Compare);
 
             elements = elements.OrderBy(i => i).ToList();
 
             // Exercise system
-            var result = sut.CyclicContains(elements[0], elements[0], elements[2]);
+            var result = sut.InOrder(elements[0], elements[0], elements[2]);
 
             // Verify outcome
             var failureString = String.Format(
@@ -85,12 +85,12 @@ namespace CyclicalSkipListTests
             (List<int> elements)
         {
             // Fixture setup
-            var sut = new LinearCompareToCyclicContainsAdapter<int>(Comparer<int>.Default.Compare);
+            var sut = new CompareToCyclicOrdererAdapter<int>(Comparer<int>.Default.Compare);
 
             elements = elements.OrderBy(i => i).ToList();
 
             // Exercise system
-            var result = sut.CyclicContains(elements[0], elements[1], elements[0]);
+            var result = sut.InOrder(elements[0], elements[1], elements[0]);
 
             // Verify outcome
             var failureString = String.Format(
@@ -108,12 +108,12 @@ namespace CyclicalSkipListTests
             (List<int> elements)
         {
             // Fixture setup
-            var sut = new LinearCompareToCyclicContainsAdapter<int>(Comparer<int>.Default.Compare);
+            var sut = new CompareToCyclicOrdererAdapter<int>(Comparer<int>.Default.Compare);
 
             elements = elements.OrderBy(i => i).ToList();
 
             // Exercise system
-            var result = sut.CyclicContains(elements[0], elements[2], elements[1]);
+            var result = sut.InOrder(elements[0], elements[2], elements[1]);
 
             // Verify outcome
             var failureString = String.Format(
