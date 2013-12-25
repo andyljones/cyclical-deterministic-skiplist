@@ -14,8 +14,7 @@ namespace CyclicalSkipList
                 return;
             }
 
-
-            if (skiplist.Head.DistanceRightTo(skiplist.Head) >= skiplist.MaximumGapSize)
+            if (skiplist.Head.DistanceRightTo(skiplist.Head) > 1)
             {
                 //TODO: Test
                 var newHead = skiplist.CreateNode(skiplist.Head.Key);

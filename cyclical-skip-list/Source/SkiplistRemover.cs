@@ -11,12 +11,23 @@ namespace CyclicalSkipList
                 return false;
             }
 
-            if (skiplist.Head.Down == null)
+            if (skiplist.Head.Down == null && Equals(skiplist.Head.Key, key))
             {
                 return TryRemoveCurrentHead(skiplist, key);
             }
 
-            var keyFound = skiplist.Find(key, pathAction: node => HandlePathToDeletionPoint(node, key, skiplist.MinimumGapSize), start: skiplist.Head.Down);
+            var keyFound = 
+                skiplist.Find(
+                key: key, 
+                pathAction: node => HandlePathToDeletionPoint(node, key, skiplist.MinimumGapSize), 
+                start: skiplist.Head.Down);
+
+            if (skiplist.Head.Down.LengthOfList() <= 1)
+            {
+                skiplist.Head = skiplist.Head.Down;
+                skiplist.Head.Up = null;
+            }
+
             return keyFound;
         }
 
@@ -25,12 +36,6 @@ namespace CyclicalSkipList
             if (skiplist.Head.Right == skiplist.Head && Equals(skiplist.Head.Key, key))
             {
                 skiplist.Head = null;
-                return true;
-            }
-            else if (skiplist.Head.Right != skiplist.Head && Equals(skiplist.Head.Key, key))
-            {
-                skiplist.Head.Left.ConnectTo(skiplist.Head.Right);
-                skiplist.Head = skiplist.Head.Right;
                 return true;
             }
             else

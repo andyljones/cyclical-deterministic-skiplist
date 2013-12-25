@@ -108,7 +108,7 @@ namespace CyclicalSkipListTests
             sut.Remove(key);
 
             // Verify outcome
-            var result = sut.Head.Down.EnumerateRight().Count();
+            var result = sut.Head.Bottom().EnumerateRight().Count();
 
             var failureString =
                 String.Format(
@@ -134,7 +134,7 @@ namespace CyclicalSkipListTests
             sut.Remove(key);
 
             // Verify outcome
-            var result = sut.Head.Down.EnumerateRight().Any(node => node.Key == key);
+            var result = sut.Head.Bottom().EnumerateRight().Any(node => node.Key == key);
 
             var failureString =
                 String.Format(
@@ -249,7 +249,7 @@ namespace CyclicalSkipListTests
             sut.Remove(key);
 
             // Verify outcome
-            var result = sut.Head.Down.SizeOfGap();
+            var result = sut.Head.SizeOfGap();
 
             var failureString =
                 String.Format(
@@ -281,7 +281,7 @@ namespace CyclicalSkipListTests
             sut.Remove(key);
 
             // Verify outcome
-            var result = sut.Head.Down.Left.SizeOfGap();
+            var result = sut.Head.Left.SizeOfGap();
 
             var failureString =
                 String.Format(
@@ -294,7 +294,7 @@ namespace CyclicalSkipListTests
             // Teardown
         }
 
-        //[Theory]
+        [Theory]
         [FixedLengthSkiplistData(length: 2 * MaximumGapSize)]
         public void Remove_ingAKeyFromAPairOfMinimallySizedGaps_ShouldCauseHeightOfTheSkiplistToDropByOne
             (Skiplist<int> sut, List<int> keys)
