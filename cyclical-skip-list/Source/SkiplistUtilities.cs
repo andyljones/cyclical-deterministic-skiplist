@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace CyclicalSkipList
+﻿namespace CyclicalSkipList
 {
     public static class SkiplistUtilities
     {

@@ -8,11 +8,9 @@ namespace CyclicalSkipList
     {
         public static string StringOf<T>(Skiplist<T> skiplist)
         {
-            var skiplistString = "";
-
             if (skiplist.Head == null)
             {
-                skiplistString = "Empty";
+                return "Empty";
             }
             else
             {
@@ -21,10 +19,8 @@ namespace CyclicalSkipList
 
                 var levelStrings = levels.Select(level => FormatLevel(level, format) + "\n").ToArray();
 
-                skiplistString = String.Concat(levelStrings).Replace(" ", "-");
+                return String.Concat(levelStrings).Replace(" ", "-");
             }
-
-            return skiplistString;
         }
 
         private static string CreateFormatFor<T>(Skiplist<T> skiplist)

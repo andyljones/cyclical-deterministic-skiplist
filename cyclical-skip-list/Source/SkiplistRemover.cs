@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CyclicalSkipList
+﻿namespace CyclicalSkipList
 {
     public static class SkiplistRemover
     {
