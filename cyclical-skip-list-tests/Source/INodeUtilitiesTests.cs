@@ -45,7 +45,7 @@ namespace CyclicalSkipListTests
         }
 
         [Theory]
-        [AutoSkiplistData(height: 1)]
+        [FixedHeightSkiplistData(height: 1)]
         public void EnumerateRight_OnACircularListOfINodes_ShouldEncounterEveryKeyInTheList
             (Skiplist<int> list, List<int> keys)
         {
@@ -64,7 +64,7 @@ namespace CyclicalSkipListTests
         }
 
         [Theory]
-        [AutoSkiplistData(height: 1)]
+        [FixedHeightSkiplistData(height: 1)]
         public void DistanceRightTo_OnTheHeadAndTailOfACircularListOfINodes_ShouldReturn1LessThanTheNumberOfNodesInTheList
             (Skiplist<int> list, List<int> keys)
         {

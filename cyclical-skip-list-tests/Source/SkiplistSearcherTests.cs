@@ -12,7 +12,7 @@ namespace CyclicalSkipListTests
     public class SkiplistSearcherTests
     {
         [Theory]
-        [AutoSkiplistData(3)]
+        [FixedHeightSkiplistData(3)]
         public void Find_GivenAKeyThatIsInTheSkiplist_ShouldReturnTrue
             (Skiplist<int> sut, List<int> keys)
         {
@@ -34,7 +34,7 @@ namespace CyclicalSkipListTests
         }
 
         [Theory]
-        [AutoSkiplistData(3)]
+        [FixedHeightSkiplistData(3)]
         public void Find_GivenAKeyThatIsNotInTheSkiplist_ShouldReturnFalse
             (Skiplist<int> sut, List<int> keys)
         {

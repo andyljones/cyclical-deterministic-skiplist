@@ -15,7 +15,7 @@ namespace CyclicalSkipListTests
 
 
         [Theory]
-        [AutoSkiplistData(height: 3)]
+        [FixedHeightSkiplistData(height: 3)]
         public void ReachableNodes_OnACorrectlyStructuredSkiplist_ShouldReturnCorrectNumberOfNodes
             (Skiplist<int> sut, List<int> anonymousKeys)
         {
@@ -43,7 +43,7 @@ namespace CyclicalSkipListTests
         }
 
         [Theory]
-        [AutoSkiplistData(height: 3)]
+        [FixedHeightSkiplistData(height: 3)]
         public void ValidateRightwardsReachability_OnACorrectlyStructuredSkiplist_ShouldReturnTrue
             (Skiplist<int> sut)
         {
@@ -65,7 +65,7 @@ namespace CyclicalSkipListTests
         }
 
         [Theory]
-        [AutoSkiplistData(height: 3)]
+        [FixedHeightSkiplistData(height: 3)]
         public void ValidateRightwardsReachability_WhenANodeIsOmittedFromALevel_ShouldFailAndReturnThatNode
             (Skiplist<int> sut)
         {
@@ -98,7 +98,7 @@ namespace CyclicalSkipListTests
         }
 
         [Theory]
-        [AutoSkiplistData(height: 3)]
+        [FixedHeightSkiplistData(height: 3)]
         public void ValidateOrdering_OnACorrectlyStructuredSkiplist_ShouldReturnTrue
             (Skiplist<int> sut)
         {
@@ -119,7 +119,7 @@ namespace CyclicalSkipListTests
         }
 
         [Theory]
-        [AutoSkiplistData(height: 3)]
+        [FixedHeightSkiplistData(height: 3)]
         public void ValidateOrdering_WhenTwoKeysAreInterchanged_ShouldFailAndReturnTheConcernedNodes
             (Skiplist<int> sut)
         {
@@ -157,7 +157,7 @@ namespace CyclicalSkipListTests
         }
 
         [Theory]
-        [AutoSkiplistData(height: 3)]
+        [FixedHeightSkiplistData(height: 3)]
         public void ValidateGapSize_OnACorrectlyStructuredSkiplist_ShouldReturnTrue
             (Skiplist<int> sut)
         {
@@ -178,7 +178,7 @@ namespace CyclicalSkipListTests
         }
 
         [Theory]
-        [AutoSkiplistData(height: 3)]
+        [FixedHeightSkiplistData(height: 3)]
         public void ValidateGapSize_WhenAGapIsShrunkBelowMinimum_ShouldFailAndReturnThoseNodes
             (Skiplist<int> sut)
         {
@@ -210,7 +210,7 @@ namespace CyclicalSkipListTests
         }
 
         [Theory]
-        [AutoSkiplistData(height: 3)]
+        [FixedHeightSkiplistData(height: 3)]
         public void ValidateGapSize_WhenAGapIsExpandedAboveMaximum_ShouldFailAndReturnThoseNodes
             (Skiplist<int> sut)
         {

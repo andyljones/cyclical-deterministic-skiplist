@@ -8,9 +8,9 @@ using Ploeh.AutoFixture.Xunit;
 
 namespace CyclicalSkipListTests.TestUtilities
 {
-    public class AutoSkiplistDataAttribute : AutoDataAttribute
+    public class FixedHeightSkiplistDataAttribute : AutoDataAttribute
     {
-        public AutoSkiplistDataAttribute(int height)
+        public FixedHeightSkiplistDataAttribute(int height)
         {
             int numberOfKeys;
             if (height != 0)

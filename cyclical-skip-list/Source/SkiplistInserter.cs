@@ -11,11 +11,21 @@ namespace CyclicalSkipList
                 //TODO: Test.
                 skiplist.Head = skiplist.CreateNode(key);
                 skiplist.Head.ConnectTo(skiplist.Head);
+                return;
             }
-            else
+
+
+            if (skiplist.Head.DistanceRightTo(skiplist.Head) >= skiplist.MaximumGapSize)
             {
-                skiplist.Find(key, node => InserterAction(key, skiplist, node));                       
+                //TODO: Test
+                var newHead = skiplist.CreateNode(skiplist.Head.Key);
+                newHead.ConnectTo(newHead);
+                newHead.ConnectDownTo(skiplist.Head);
+
+                skiplist.Head = newHead;
             }
+
+            skiplist.Find(key, node => InserterAction(key, skiplist, node));
         }
 
         private static void InserterAction<T>(T key, Skiplist<T> skiplist, INode<T> pathNode)

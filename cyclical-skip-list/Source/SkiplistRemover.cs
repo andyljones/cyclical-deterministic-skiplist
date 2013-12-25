@@ -6,115 +6,89 @@ namespace CyclicalSkipList
     {
         public static bool Remove<T>(this Skiplist<T> skiplist, T key)
         {
+            if (skiplist.Head == null)
+            {
+                return false;
+            }
+
             if (skiplist.Head.Down == null && Equals(skiplist.Head.Key, key))
             {
-                RemoveHead(skiplist);
+                RemoveCurrentHead(skiplist);
+                return true;
             }
 
-            var keyWasFound = skiplist.Find(key, node => RemoverAction(key, skiplist, node));
+            var keyFound = skiplist.Find(key, node => HandlePathToDeletionPoint(node, key, skiplist.MinimumGapSize));
 
-            //TODO: Test
-            if (skiplist.Head != null && skiplist.Head.Down != null && skiplist.Head.Right == skiplist.Head)
-            {
-                skiplist.Head = skiplist.Head.Down;
-                skiplist.Head.Up = null;
-            }
-
-            return keyWasFound;
+            return keyFound;
         }
 
-        //TODO: Test
-        private static void RemoveHead<T>(Skiplist<T> skiplist)
+        private static void RemoveCurrentHead<T>(Skiplist<T> skiplist)
         {
-            var oldHead = skiplist.Head;
-            if (oldHead.Right != oldHead)
-            {
-                var newHead = oldHead.Right;
-                oldHead.Left.ConnectTo(newHead);
-                skiplist.Head = newHead;
-            }
-            else
+            if (skiplist.Head.Right == skiplist.Head)
             {
                 skiplist.Head = null;
             }
-        }
-
-        private static void RemoverAction<T>(T key, Skiplist<T> skiplist, INode<T> node)
-        {
-            if (node.Down == null && Equals(node.Key, key))
+            else
             {
-                RemoveAtBottom(node);
-            }
-            else if (node.Down != null && node.SizeOfGap() <= skiplist.MinimumGapSize)
-            {
-                ExpandGap(node, skiplist);
+                skiplist.Head.Left.ConnectTo(skiplist.Head.Right);
+                skiplist.Head = skiplist.Head.Right;
             }
         }
 
-        private static void RemoveAtBottom<T>(INode<T> node)
+        private static void HandlePathToDeletionPoint<T>(INode<T> node, T key, int minimumGapSize)
         {
+            if (node.Down != null && node.SizeOfGap() <= minimumGapSize)
+            {
+                ExpandGap(node, minimumGapSize);
+            }
+            else if (node.Down == null && Equals(node.Key, key))
+            {
+                RemoveNodeFromBottomLevel(node);
+            }
+
+        }
+
+        private static void ExpandGap<T>(INode<T> headOfGap, int minimumGapSize)
+        {
+            if (headOfGap.Right.SizeOfGap() > minimumGapSize)
+            {
+                headOfGap.Right.Down.Up = null;
+                headOfGap.Right.ConnectDownTo(headOfGap.Right.Down.Right);
+                UpdateKeysInColumn(headOfGap.Right);
+            }
+            else if (headOfGap.Right.Up == null)
+            {
+                headOfGap.Right.Down.Up = null;
+                headOfGap.ConnectTo(headOfGap.Right.Right);
+            }
+            else
+            {
+                headOfGap.Down.Up = null;
+                headOfGap.Left.ConnectTo(headOfGap.Right);
+            }
+        }
+
+        private static void RemoveNodeFromBottomLevel<T>(INode<T> node)
+        {
+            node.Left.ConnectTo(node.Right);
+
             if (node.Up != null)
             {
                 node.Up.ConnectDownTo(node.Right);
-                SetKeysInColumn(node.Right);
+                UpdateKeysInColumn(node.Right);
             }
-
-            node.Left.ConnectTo(node.Right);
         }
 
-        private static void SetKeysInColumn<T>(INode<T> column)
+        private static void UpdateKeysInColumn<T>(INode<T> column)
         {
-            var bottomNode = column.Bottom();
-            var bottomKey = bottomNode.Key;
+            var bottomOfColumn = column.Bottom();
 
-            var node = bottomNode;
+            var node = bottomOfColumn;
             while (node.Up != null)
             {
                 node = node.Up;
-                node.Key = bottomKey;
+                node.Key = bottomOfColumn.Key;
             }
-        }
-
-        private static void ExpandGap<T>(INode<T> node, Skiplist<T> skiplist)
-        {
-            if (node.Right.SizeOfGap() > skiplist.MinimumGapSize)
-            {
-                BorrowFromNextGap(node);
-            } 
-            else if (node.Right.SizeOfGap() <= skiplist.MinimumGapSize)
-            {
-                MergeWithNextGap(node);
-            }
-        }
-
-        private static void MergeWithNextGap<T>(INode<T> node)
-        {
-            var nextNode = node.Right;
-
-            if (nextNode.Up != null)
-            {
-                nextNode.Up.ConnectDownTo(nextNode.Right);
-                nextNode.Up = null;
-            }
-
-            nextNode.Down.Up = null;
-            nextNode.Down = null;
-            node.ConnectTo(nextNode.Right);
-
-            SetKeysInColumn(nextNode);
-        }
-
-        private static void BorrowFromNextGap<T>(INode<T> node)
-        {
-            var gapEnd = node.Right.Down;
-
-            if (gapEnd.Up != null)
-            {
-                gapEnd.Up.ConnectDownTo(gapEnd.Right);
-                gapEnd.Up = null;
-            }
-
-            SetKeysInColumn(gapEnd.Right);
         }
     }
 }

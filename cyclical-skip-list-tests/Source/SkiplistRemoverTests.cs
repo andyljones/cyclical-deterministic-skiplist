@@ -11,80 +11,317 @@ namespace CyclicalSkipListTests
 {
     public class SkiplistRemoverTests
     {
+        private const int MinimumGapSize = 2;
+        private const int MaximumGapSize = 2*MinimumGapSize;
+
+        public SkiplistRemoverTests()
+        {
+            SkiplistFactory.MinimumGapSize = MinimumGapSize;
+        }
+
         [Theory]
-        [AutoSkiplistData(height: 1)]
-        public void Remove_ingAKeyWhichAppearsOnceInASkiplist_ShouldDeleteThatKeyFromASingleLayerSkiplist
-            (Skiplist<int> sut, List<int> keys)
+        [FixedLengthSkiplistData(length: 0)]
+        public void Remove_ingAKeyFromAnEmptySkiplist_ShouldReturnFalse
+            (Skiplist<int> sut, int key)
         {
             // Fixture setup
-            var key = keys.First();
 
             // Exercise system
-            sut.Remove(key);
+            var result = sut.Remove(key);
 
             // Verify outcome
-            var result = sut.Find(key);
-
             var failureString =
                 String.Format(
-                "Key {0} was removed from skiplist \n\n{1}\n\n but was subsequently found anyway", 
-                key, 
+                "Removing key {0} from skiplist \n\n{1}\n returned true despite the skiplist being empty", 
+                key,
                 sut);
+
             Assert.False(result, failureString);
 
             // Teardown
         }
 
         [Theory]
-        [AutoSkiplistData(height: 2)]
-        public void Remove_ingManyKeys_ShouldPreserveTheMinimumGapSize
-            (Skiplist<int> sut, List<int> keys)
+        [FixedLengthSkiplistData(length: 1)]
+        public void Remove_ingTheKeyOfTheHeadOfASingleNodeSkiplist_ShouldLeaveSkiplistEmpty
+            (Skiplist<int> sut)
         {
             // Fixture setup
-            var keysToBeRemoved = keys.OrderBy(x => x).Take(2*sut.MaximumGapSize).ToList();
+            var key = sut.Head.Key;
 
             // Exercise system
-            foreach (var key in keysToBeRemoved)
-            {
-                sut.Remove(key);
-            }
-
-            // Verify outcome
-            IEnumerable<INode<int>> failingNodes;
-            var result = SkiplistValidator.ValidateGapSize(sut, out failingNodes);
-
-            var failureString =
-                String.Format(
-                    "Keys {0} were removed from skiplist \n\n{1}\n and subsequently nodes {2} were found to have invalid gap sizes",
-                    String.Join(", ", keysToBeRemoved),
-                    sut,
-                    String.Join(", ", failingNodes));
-            Assert.True(result, failureString);
-
-            // Teardown
-        }
-
-        [Theory]
-        [AutoSkiplistData(height: 3)]
-        public void Remove_ingAllKeys_ShouldLeaveASkiplistWithAnEmptyHead
-            (Skiplist<int> sut, List<int> keys)
-        {
-            // Fixture setup
-
-            // Exercise system
-            foreach (var key in keys)
-            {
-                sut.Remove(key);
-            }
+            sut.Remove(key);
 
             // Verify outcome
             var result = sut.Head == null;
 
             var failureString =
                 String.Format(
-                    "All keys were to be removed from skiplist \n\n{0}\n, but a head remains",
-                    sut);
+                "Removing key {0} from single-node skiplist \n\n{1}\n left the head intact",
+                key,
+                sut);
+
             Assert.True(result, failureString);
+
+            // Teardown
+        }
+
+        [Theory]
+        [FixedHeightSkiplistData(height: 1)]
+        public void Remove_ingTheKeyOfTheHeadOfASingleLevelSkiplist_ShouldRemoveOnlyOneNode
+            (Skiplist<int> sut, List<int> keys)
+        {
+            // Fixture setup
+            var expectedResult = keys.Count - 1;
+
+            var key = sut.Head.Key;
+
+            // Exercise system
+            sut.Remove(key);
+
+            // Verify outcome
+            var result = SkiplistValidator.ReachableNodes(sut).Count();
+
+            var failureString =
+                String.Format(
+                "Removing key {0} from skiplist \n\n{1}\n left other than one node intact",
+                key,
+                sut);
+
+            Assert.True(result == expectedResult, failureString);
+
+            // Teardown
+        }
+
+        [Theory]
+        [FixedHeightSkiplistData(height: 1)]
+        public void Remove_ingAKeyFromASingleLevelSkiplistOtherThanTheHead_ShouldRemoveExactlyOneNode
+            (Skiplist<int> sut, List<int> keys)
+        {
+            // Fixture setup
+            var expectedResult = keys.Count - 1;
+
+            keys.Remove(sut.Head.Key);
+            var key = keys.First();
+
+            // Exercise system
+            sut.Remove(key);
+
+            // Verify outcome
+            var result = SkiplistValidator.ReachableNodes(sut).Count();
+
+            var failureString =
+                String.Format(
+                "Removing key {0} from skiplist \n\n{1}\n deleted other than exactly one node",
+                key,
+                sut);
+
+            Assert.True(result == expectedResult, failureString);
+
+            // Teardown
+        }
+
+        [Theory]
+        [FixedHeightSkiplistData(height: 1)]
+        public void Remove_ingAKeyFromASingleLevelSkiplistOtherThanTheHead_ShouldRemoveANodeContainingThatKey
+            (Skiplist<int> sut, List<int> keys)
+        {
+            // Fixture setup
+            keys.Remove(sut.Head.Key);
+            var key = keys.First();
+
+            // Exercise system
+            sut.Remove(key);
+
+            // Verify outcome
+            var result = sut.Head.Bottom().EnumerateRight().Any(node => node.Key == key);
+
+            var failureString =
+                String.Format(
+                "Removing key {0} from skiplist \n\n{1}\n did not remove the node containing that key",
+                key,
+                sut);
+
+            Assert.False(result, failureString);
+
+            // Teardown
+        }
+
+        [Theory]
+        [FixedHeightSkiplistData(height: 2)]
+        public void Remove_ingAKeyFromTheBaseOfAColumn_ShouldUpdateTheColumnToPointAtTheNodeToTheRight
+            (Skiplist<int> sut, List<int> keys)
+        {
+            // Fixture setup
+            var expectedResult = sut.Head.Down.Right;
+            
+            var key = keys.Min();
+
+            // Exercise system
+            sut.Remove(key);
+
+            // Verify outcome
+            var result = sut.Head.Bottom();
+
+            var failureString =
+                String.Format(
+                "Removing key {0} from skiplist \n\n{1}\n did not update the column to point at node {2}",
+                key,
+                sut,
+                expectedResult);
+
+            Assert.True(result == expectedResult, failureString);
+
+            // Teardown
+        }
+
+        [Theory]
+        [FixedHeightSkiplistData(height: 2)]
+        public void Remove_ingAKeyFromTheBaseOfAColumn_ShouldUpdateTheKeysInTheColumnToTheCorrectValue
+            (Skiplist<int> sut, List<int> keys)
+        {
+            // Fixture setup
+            var expectedKey = sut.Head.Down.Right.Key;
+
+            var key = keys.Min();
+
+            // Exercise system
+            sut.Remove(key);
+
+            // Verify outcome
+            var result = sut.Head.EnumerateDown().Where(node => node.Key != expectedKey).ToList();
+
+            var failureString =
+                String.Format(
+                "Removing key {0} from skiplist \n\n{1}\n did not update the keys in the column. Instead, nodes {2} remained",
+                key,
+                sut,
+                String.Join(", ", result));
+
+            Assert.False(result.Any(), failureString);
+
+            // Teardown
+        }
+
+        [Theory]
+        [FixedLengthSkiplistData(length: 2*MaximumGapSize)]
+        public void Remove_ingAKeyFromMinimallySizedGapWithAMoreThanMinimalGapToTheRight_ShouldCauseTheGapToBorrowFromTheOneToTheRight
+            (Skiplist<int> sut, List<int> keys)
+        {
+            // Fixture setup
+            var expectedResult = 2;
+
+            var key = keys.Min();
+
+            sut.Head.Down.ConnectTo(sut.Head.Right.Down.Left);
+
+            // Exercise system
+            sut.Remove(key);
+
+            // Verify outcome
+            var result = sut.Head.SizeOfGap();
+
+            var failureString =
+                String.Format(
+                "Removing key {0} from skiplist \n\n{1}\n did not cause the left gap to borrow from the right gap",
+                key,
+                sut);
+
+            Assert.True(result == expectedResult, failureString);
+
+            // Teardown
+        }
+
+        [Theory]
+        [FixedLengthSkiplistData(length: 2 * MaximumGapSize)]
+        public void Remove_ingAKeyFromMinimallySizedGapWithMinimalGapToTheRight_ShouldCauseTheGapToMergeWithTheOneToTheRight
+            (Skiplist<int> sut, List<int> keys)
+        {
+            // Fixture setup
+            var expectedResult = 3;
+
+            var key = keys.Min();
+
+            sut.Head.Down.ConnectTo(sut.Head.Right.Down.Left);
+            sut.Head.Right.Down.ConnectTo(sut.Head.Right.Right.Down.Left);
+
+            // Exercise system
+            sut.Remove(key);
+
+            // Verify outcome
+            var result = sut.Head.SizeOfGap();
+
+            var failureString =
+                String.Format(
+                "Removing key {0} from skiplist \n\n{1}\n did not cause the left gap to merge with the right gap",
+                key,
+                sut);
+
+            Assert.True(result == expectedResult, failureString);
+
+            // Teardown
+        }
+
+        [Theory]
+        [FixedLengthSkiplistData(length: 4 * MaximumGapSize + 1)]
+        public void Remove_ingAKeyFromMinimallySizedGapWithNoGapToTheRight_ShouldCauseTheGapToMergeWithTheOneToTheLeft
+            (Skiplist<int> sut, List<int> keys)
+        {
+            // Fixture setup
+            var expectedResult = 3;
+
+            var key = keys.Max();
+
+            foreach (var node in sut.Head.Down.EnumerateRight())
+            {
+                node.Down.ConnectTo(node.Right.Down.Left);
+            }
+
+            // Exercise system
+            sut.Remove(key);
+
+            // Verify outcome
+            var result = sut.Head.Down.Left.SizeOfGap();
+
+            var failureString =
+                String.Format(
+                "Removing key {0} from skiplist \n\n{1}\n did not cause the right gap to merge with the left gap",
+                key,
+                sut);
+
+            Assert.True(result == expectedResult, failureString);
+
+            // Teardown
+        }
+
+        //[Theory]
+        [FixedLengthSkiplistData(length: 2 * MaximumGapSize)]
+        public void Remove_ingAKeyFromAPairOfMinimallySizedGaps_ShouldCauseHeightOfTheSkiplistToDropByOne
+            (Skiplist<int> sut, List<int> keys)
+        {
+            // Fixture setup
+            var expectedResult = 1;
+
+            var key = keys.Min();
+
+            foreach (var node in sut.Head.EnumerateRight())
+            {
+                node.Down.ConnectTo(node.Right.Down.Left);
+            }
+
+            // Exercise system
+            sut.Remove(key);
+
+            // Verify outcome
+            var result = sut.Head.Height();
+
+            var failureString =
+                String.Format(
+                "Removing key {0} from skiplist \n\n{1}\n did not cause the skiplist to drop in height by 1",
+                key,
+                sut);
+
+            Assert.True(result == expectedResult, failureString);
 
             // Teardown
         }

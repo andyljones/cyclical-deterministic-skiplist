@@ -69,8 +69,9 @@
     <Compile Include="Source\SkiplistValidatorTests.cs" />
     <Compile Include="Source\TestUtilities\AutoNSubstituteData.cs" />
     <Compile Include="Source\TestUtilities\AutoRandomRepeatCountDataAttribute.cs" />
-    <Compile Include="Source\TestUtilities\AutoSkiplistData.cs" />
+    <Compile Include="Source\TestUtilities\FixedHeightSkiplistData.cs" />
     <Compile Include="Source\SkiplistFactoryTests.cs" />
+    <Compile Include="Source\TestUtilities\FixedLengthSkiplistData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

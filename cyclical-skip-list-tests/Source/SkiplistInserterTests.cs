@@ -11,7 +11,7 @@ namespace CyclicalSkipListTests
     public class SkiplistInserterTests
     {
         [Theory]
-        [AutoSkiplistData(height: 1)]
+        [FixedHeightSkiplistData(height: 1)]
         public void Insert_ingAKey_ShouldAddThatKeyToTheSkiplist
             (Skiplist<int> sut, int key)
         {
@@ -34,7 +34,7 @@ namespace CyclicalSkipListTests
         }
 
         [Theory]
-        [AutoSkiplistData(height: 1)]
+        [FixedHeightSkiplistData(height: 1)]
         public void Insert_ingAKey_ShouldPreserveTheOrdering
             (Skiplist<int> sut, int key)
         {
@@ -59,7 +59,7 @@ namespace CyclicalSkipListTests
         }
 
         [Theory]
-        [AutoSkiplistData(height: 2)]
+        [FixedHeightSkiplistData(height: 2)]
         public void Insert_ingManyKeys_ShouldPreserveTheMaximumGapSize
             (Skiplist<int> sut, int key)
         {
