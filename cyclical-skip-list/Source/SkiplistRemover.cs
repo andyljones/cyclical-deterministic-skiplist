@@ -4,7 +4,7 @@ namespace CyclicalSkipList
 {
     public static class SkiplistRemover
     {
-        public static bool Remove<T>(this Skiplist<T> skiplist, T key)
+        public static bool Delete<T>(this Skiplist<T> skiplist, T key)
         {
             if (skiplist.Head == null)
             {
@@ -20,7 +20,7 @@ namespace CyclicalSkipList
                 skiplist.Find(
                 key: key, 
                 pathAction: node => HandlePathToDeletionPoint(node, key, skiplist.MinimumGapSize), 
-                start: skiplist.Head.Down);
+                origin: skiplist.Head.Down);
 
             if (skiplist.Head.Down.LengthOfList() <= 1)
             {

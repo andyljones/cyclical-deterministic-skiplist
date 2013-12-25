@@ -40,9 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Source\ICyclicContains.cs" />
     <Compile Include="Source\INodeUtilities.cs" />
-    <Compile Include="Source\CompareToCyclicOrderingAdapter.cs" />
+    <Compile Include="Source\CompareToCyclicOrdererAdapter.cs" />
     <Compile Include="Source\Node.cs" />
     <Compile Include="Source\INode.cs" />
     <Compile Include="Source\Skiplist.cs" />

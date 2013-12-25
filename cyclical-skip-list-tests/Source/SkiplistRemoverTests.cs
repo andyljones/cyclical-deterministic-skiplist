@@ -9,25 +9,25 @@ using Xunit.Extensions;
 
 namespace CyclicalSkipListTests
 {
-    public class SkiplistRemoverTests
+    public class SkiplistDeleterTests
     {
         private const int MinimumGapSize = 2;
         private const int MaximumGapSize = 2*MinimumGapSize;
 
-        public SkiplistRemoverTests()
+        public SkiplistDeleterTests()
         {
             SkiplistFactory.MinimumGapSize = MinimumGapSize;
         }
 
         [Theory]
         [FixedLengthSkiplistData(length: 0)]
-        public void Remove_ingAKeyFromAnEmptySkiplist_ShouldReturnFalse
+        public void Delete_ingAKeyFromAnEmptySkiplist_ShouldReturnFalse
             (Skiplist<int> sut, int key)
         {
             // Fixture setup
 
             // Exercise system
-            var result = sut.Remove(key);
+            var result = sut.Delete(key);
 
             // Verify outcome
             var failureString =
@@ -43,14 +43,14 @@ namespace CyclicalSkipListTests
 
         [Theory]
         [FixedLengthSkiplistData(length: 1)]
-        public void Remove_ingTheKeyOfTheHeadOfASingleNodeSkiplist_ShouldLeaveSkiplistEmpty
+        public void Delete_ingTheKeyOfTheHeadOfASingleNodeSkiplist_ShouldLeaveSkiplistEmpty
             (Skiplist<int> sut)
         {
             // Fixture setup
             var key = sut.Head.Key;
 
             // Exercise system
-            sut.Remove(key);
+            sut.Delete(key);
 
             // Verify outcome
             var result = sut.Head == null;
@@ -68,7 +68,7 @@ namespace CyclicalSkipListTests
 
         [Theory]
         [FixedHeightSkiplistData(height: 1)]
-        public void Remove_ingTheKeyOfTheHeadOfASingleLevelSkiplist_ShouldRemoveOnlyOneNode
+        public void Delete_ingTheKeyOfTheHeadOfASingleLevelSkiplist_ShouldDeleteOnlyOneNode
             (Skiplist<int> sut, List<int> keys)
         {
             // Fixture setup
@@ -77,7 +77,7 @@ namespace CyclicalSkipListTests
             var key = sut.Head.Key;
 
             // Exercise system
-            sut.Remove(key);
+            sut.Delete(key);
 
             // Verify outcome
             var result = sut.Head.Bottom().EnumerateRight().Count();
@@ -95,7 +95,7 @@ namespace CyclicalSkipListTests
 
         [Theory]
         [FixedHeightSkiplistData(height: 1)]
-        public void Remove_ingAKeyFromASingleLevelSkiplistOtherThanTheHead_ShouldRemoveExactlyOneNode
+        public void Delete_ingAKeyFromASingleLevelSkiplistOtherThanTheHead_ShouldDeleteExactlyOneNode
             (Skiplist<int> sut, List<int> keys)
         {
             // Fixture setup
@@ -105,7 +105,7 @@ namespace CyclicalSkipListTests
             var key = keys.First();
 
             // Exercise system
-            sut.Remove(key);
+            sut.Delete(key);
 
             // Verify outcome
             var result = sut.Head.Bottom().EnumerateRight().Count();
@@ -123,7 +123,7 @@ namespace CyclicalSkipListTests
 
         [Theory]
         [FixedHeightSkiplistData(height: 1)]
-        public void Remove_ingAKeyFromASingleLevelSkiplistOtherThanTheHead_ShouldRemoveANodeContainingThatKey
+        public void Delete_ingAKeyFromASingleLevelSkiplistOtherThanTheHead_ShouldDeleteANodeContainingThatKey
             (Skiplist<int> sut, List<int> keys)
         {
             // Fixture setup
@@ -131,14 +131,14 @@ namespace CyclicalSkipListTests
             var key = keys.First();
 
             // Exercise system
-            sut.Remove(key);
+            sut.Delete(key);
 
             // Verify outcome
             var result = sut.Head.Bottom().EnumerateRight().Any(node => node.Key == key);
 
             var failureString =
                 String.Format(
-                "Removing key {0} from skiplist \n\n{1}\n did not remove the node containing that key",
+                "Removing key {0} from skiplist \n\n{1}\n did not Delete the node containing that key",
                 key,
                 sut);
 
@@ -149,7 +149,7 @@ namespace CyclicalSkipListTests
 
         [Theory]
         [FixedHeightSkiplistData(height: 2)]
-        public void Remove_ingAKeyFromTheBaseOfAColumn_ShouldUpdateTheColumnToPointAtTheNodeToTheRight
+        public void Delete_ingAKeyFromTheBaseOfAColumn_ShouldUpdateTheColumnToPointAtTheNodeToTheRight
             (Skiplist<int> sut, List<int> keys)
         {
             // Fixture setup
@@ -158,7 +158,7 @@ namespace CyclicalSkipListTests
             var key = keys.Min();
 
             // Exercise system
-            sut.Remove(key);
+            sut.Delete(key);
 
             // Verify outcome
             var result = sut.Head.Bottom();
@@ -177,7 +177,7 @@ namespace CyclicalSkipListTests
 
         [Theory]
         [FixedHeightSkiplistData(height: 2)]
-        public void Remove_ingAKeyFromTheBaseOfAColumn_ShouldUpdateTheKeysInTheColumnToTheCorrectValue
+        public void Delete_ingAKeyFromTheBaseOfAColumn_ShouldUpdateTheKeysInTheColumnToTheCorrectValue
             (Skiplist<int> sut, List<int> keys)
         {
             // Fixture setup
@@ -186,7 +186,7 @@ namespace CyclicalSkipListTests
             var key = keys.Min();
 
             // Exercise system
-            sut.Remove(key);
+            sut.Delete(key);
 
             // Verify outcome
             var result = sut.Head.EnumerateDown().Where(node => node.Key != expectedKey).ToList();
@@ -205,7 +205,7 @@ namespace CyclicalSkipListTests
 
         [Theory]
         [FixedLengthSkiplistData(length: 2*MaximumGapSize)]
-        public void Remove_ingAKeyFromMinimallySizedGapWithAMoreThanMinimalGapToTheRight_ShouldCauseTheGapToBorrowFromTheOneToTheRight
+        public void Delete_ingAKeyFromMinimallySizedGapWithAMoreThanMinimalGapToTheRight_ShouldCauseTheGapToBorrowFromTheOneToTheRight
             (Skiplist<int> sut, List<int> keys)
         {
             // Fixture setup
@@ -216,7 +216,7 @@ namespace CyclicalSkipListTests
             sut.Head.Down.Down.ConnectTo(sut.Head.Down.Right.Down.Left);
 
             // Exercise system
-            sut.Remove(key);
+            sut.Delete(key);
 
             // Verify outcome
             var result = sut.Head.SizeOfGap();
@@ -234,7 +234,7 @@ namespace CyclicalSkipListTests
 
         [Theory]
         [FixedLengthSkiplistData(length: 2 * MaximumGapSize)]
-        public void Remove_ingAKeyFromMinimallySizedGapWithMinimalGapToTheRight_ShouldCauseTheGapToMergeWithTheOneToTheRight
+        public void Delete_ingAKeyFromMinimallySizedGapWithMinimalGapToTheRight_ShouldCauseTheGapToMergeWithTheOneToTheRight
             (Skiplist<int> sut, List<int> keys)
         {
             // Fixture setup
@@ -246,7 +246,7 @@ namespace CyclicalSkipListTests
             sut.Head.Down.Right.Down.ConnectTo(sut.Head.Down.Right.Right.Down.Left);
 
             // Exercise system
-            sut.Remove(key);
+            sut.Delete(key);
 
             // Verify outcome
             var result = sut.Head.SizeOfGap();
@@ -264,7 +264,7 @@ namespace CyclicalSkipListTests
 
         [Theory]
         [FixedLengthSkiplistData(length: 2 * MaximumGapSize)]
-        public void Remove_ingAKeyFromMinimallySizedGapWithNoGapToTheRight_ShouldCauseTheGapToMergeWithTheOneToTheLeft
+        public void Delete_ingAKeyFromMinimallySizedGapWithNoGapToTheRight_ShouldCauseTheGapToMergeWithTheOneToTheLeft
             (Skiplist<int> sut, List<int> keys)
         {
             // Fixture setup
@@ -278,7 +278,7 @@ namespace CyclicalSkipListTests
             }
 
             // Exercise system
-            sut.Remove(key);
+            sut.Delete(key);
 
             // Verify outcome
             var result = sut.Head.Left.SizeOfGap();
@@ -296,7 +296,7 @@ namespace CyclicalSkipListTests
 
         [Theory]
         [FixedLengthSkiplistData(length: 2 * MaximumGapSize)]
-        public void Remove_ingAKeyFromAPairOfMinimallySizedGaps_ShouldCauseHeightOfTheSkiplistToDropByOne
+        public void Delete_ingAKeyFromAPairOfMinimallySizedGaps_ShouldCauseHeightOfTheSkiplistToDropByOne
             (Skiplist<int> sut, List<int> keys)
         {
             // Fixture setup
@@ -310,7 +310,7 @@ namespace CyclicalSkipListTests
             }
 
             // Exercise system
-            sut.Remove(key);
+            sut.Delete(key);
 
             // Verify outcome
             var result = sut.Head.Height();

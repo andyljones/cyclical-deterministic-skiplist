@@ -62,10 +62,11 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\INodeUtilitiesTests.cs" />
-    <Compile Include="Source\LinearCompareToCyclicContainsAdapterTests.cs" />
+    <Compile Include="Source\CompareToCyclicOrdererAdapterTests.cs" />
     <Compile Include="Source\SkiplistInserterTests.cs" />
     <Compile Include="Source\SkiplistRemoverTests.cs" />
     <Compile Include="Source\SkiplistSearcherTests.cs" />
+    <Compile Include="Source\SkiplistTests.cs" />
     <Compile Include="Source\TestUtilities\AutoNSubstituteData.cs" />
     <Compile Include="Source\TestUtilities\AutoRandomRepeatCountDataAttribute.cs" />
     <Compile Include="Source\TestUtilities\FixedHeightSkiplistData.cs" />
