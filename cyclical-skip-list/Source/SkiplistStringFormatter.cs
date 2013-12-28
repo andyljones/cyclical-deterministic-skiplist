@@ -19,7 +19,7 @@ namespace CyclicalSkipList
 
                 var levelStrings = levels.Select(level => FormatLevel(level, format) + "\n").ToArray();
 
-                return String.Concat(levelStrings).Replace(" ", "-");
+                return String.Concat(levelStrings);
             }
         }
 
