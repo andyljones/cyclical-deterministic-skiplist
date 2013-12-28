@@ -10,12 +10,12 @@ namespace CyclicalSkipList
             INode<T> origin = null, 
             Action<INode<T>> pathAction = null)
         {
-            var gapContainingNode = skiplist.FetchGap(key, origin, pathAction);
+            var nodeOfKey = skiplist.FetchNode(key, origin, pathAction);
 
-            return Equals(gapContainingNode.Key, key);
+            return skiplist.AreEqual(nodeOfKey.Key, key);
         }
 
-        public static INode<T> FetchGap<T>(
+        public static INode<T> FetchNode<T>(
             this Skiplist<T> skiplist, 
             T key, 
             INode<T> origin = null,
@@ -31,7 +31,7 @@ namespace CyclicalSkipList
             var atCorrectNode = false;
             while (!atCorrectNode)
             {
-                node = FindCorrectGapInLevel(key, node, skiplist.InOrder);
+                node = FindCorrectGapInLevel(key, node, skiplist.InOrder, skiplist.AreEqual);
 
                 if (pathAction != null)
                 {
@@ -51,13 +51,23 @@ namespace CyclicalSkipList
             return node;
         }
 
-        private static INode<T> FindCorrectGapInLevel<T>(T key, INode<T> start, Func<T, T, T, bool> compare)
+        private static INode<T> FindCorrectGapInLevel<T>(T key, INode<T> start, Func<T, T, T, bool> inOrder, Func<T, T, bool> areEqual)
         {
             var node = start;
 
-            while (!compare(node.Key, key, node.Right.Key))
+            while (!inOrder(node.Key, key, node.Right.Key))
             {
                 node = node.Right;
+                if (node == start) { break; }
+            }
+
+            if (node.Down == null)
+            {
+                while (!areEqual(node.Key, key) && inOrder(node.Right.Key, key, node.Right.Right.Key))
+                {
+                    node = node.Right;
+                    if (node == start) { break; }
+                }
             }
 
             return node;

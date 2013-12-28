@@ -1,4 +1,6 @@
-﻿namespace CyclicalSkipList
+﻿using System;
+
+namespace CyclicalSkipList
 {
     public static class SkiplistRemover
     {
@@ -9,7 +11,7 @@
                 return false;
             }
 
-            if (skiplist.Head.Down == null && Equals(skiplist.Head.Key, key))
+            if (skiplist.Head.Down == null && skiplist.AreEqual(skiplist.Head.Key, key))
             {
                 return TryRemoveCurrentHead(skiplist, key);
             }
@@ -17,7 +19,7 @@
             var keyFound = 
                 skiplist.Find(
                 key: key, 
-                pathAction: node => HandlePathToDeletionPoint(node, key, skiplist.MinimumGapSize), 
+                pathAction: node => HandlePathToDeletionPoint(node, key, skiplist.MinimumGapSize, skiplist.AreEqual), 
                 origin: skiplist.Head.Down);
 
             if (skiplist.Head.Down.LengthOfList() <= 1)
@@ -31,7 +33,7 @@
 
         private static bool TryRemoveCurrentHead<T>(Skiplist<T> skiplist, T key)
         {
-            if (skiplist.Head.Right == skiplist.Head && Equals(skiplist.Head.Key, key))
+            if (skiplist.Head.Right == skiplist.Head && skiplist.AreEqual(skiplist.Head.Key, key))
             {
                 skiplist.Head = null;
                 return true;
@@ -42,13 +44,13 @@
             }
         }
 
-        private static void HandlePathToDeletionPoint<T>(INode<T> node, T key, int minimumGapSize)
+        private static void HandlePathToDeletionPoint<T>(INode<T> node, T key, int minimumGapSize, Func<T, T, bool> areEqual)
         {
             if (node.Down != null && node.SizeOfGap() <= minimumGapSize)
             {
                 ExpandGap(node, minimumGapSize);
             }
-            else if (node.Down == null && Equals(node.Key, key))
+            else if (node.Down == null && areEqual(node.Key, key))
             {
                 RemoveNodeFromBottomLevel(node);
             }

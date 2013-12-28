@@ -12,12 +12,14 @@ namespace CyclicalSkipList
         public readonly int MinimumGapSize;
         public readonly int MaximumGapSize;
 
-        public readonly Func<T, T, T, bool> InOrder;
-        public readonly Func<T, INode<T>> NodeFactory = SkiplistUtilities.CreateNode; 
+        public Func<T, T, T, bool> InOrder;
+        public Func<T, T, bool> AreEqual; 
+        public Func<T, INode<T>> NodeFactory = SkiplistUtilities.CreateNode; 
 
-        public Skiplist(int minimumGapSize = 2, Func<T, T, T, bool> inOrder = null)
+        public Skiplist(int minimumGapSize = 2)
         {
-            InOrder = inOrder ?? new CompareToCyclicOrdererAdapter<T>(Comparer<T>.Default.Compare).InOrder;
+            InOrder = new CompareToCyclicOrdererAdapter<T>(Comparer<T>.Default.Compare).InOrder;
+            AreEqual = EqualityComparer<T>.Default.Equals;
             MinimumGapSize = minimumGapSize;
             MaximumGapSize = 2 * minimumGapSize;
         }
@@ -91,7 +93,7 @@ namespace CyclicalSkipList
 
         public INode<T> NodeContaining(T key)
         {
-            return this.FetchGap(key);
+            return this.FetchNode(key);
         }
 
         public override string ToString()
